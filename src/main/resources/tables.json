@@ -1,1 +1,15 @@
-[ ]
+[ {
+  "name" : "nfg",
+  "time" : "21",
+  "available" : false,
+  "tableNumber" : 3,
+  "capacity" : 4,
+  "isAvailable" : false
+}, {
+  "name" : "fghg",
+  "time" : "21",
+  "available" : false,
+  "tableNumber" : 6,
+  "capacity" : 5,
+  "isAvailable" : false
+} ]

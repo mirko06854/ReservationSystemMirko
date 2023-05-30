@@ -46,23 +46,29 @@ public class MainMerged extends Application {
         Button reserveButton = new Button("Reserve");
 
         reserveButton.setOnAction(e -> {
+            String name = nameField.getText();
+            String time = timeField.getText();
+            int tableNumber;
+            int capacity;
+
             try {
-                Reservation reservation = new Reservation(
-                        nameField.getText(),
-                        timeField.getText(),
-                        Integer.parseInt(tableNumberField.getText()),
-                        Integer.parseInt(capacityField.getText())
-                );
+                tableNumber = Integer.parseInt(tableNumberField.getText());
+                capacity = Integer.parseInt(capacityField.getText());
+
+                if (tableNumber < 0 || capacity < 0) {
+                    throw new IllegalArgumentException("Table number and capacity cannot be negative.");
+                }
+
+                Reservation reservation = new Reservation(name, time, tableNumber, capacity);
 
                 reservations.add(reservation);
 
-                ReservationDisplay display = new ReservationDisplay(
+                reservationDisplays.add(new ReservationDisplay(
                         reservation.getName(),
                         reservation.getTime(),
                         reservation.getTableNumber(),
                         reservation.getCapacity()
-                );
-                reservationDisplays.add(display);
+                ));
 
                 nameField.clear();
                 timeField.clear();
@@ -73,6 +79,12 @@ public class MainMerged extends Application {
                 alert.setTitle("Invalid Input");
                 alert.setHeaderText("Invalid table number or capacity");
                 alert.setContentText("Please enter valid integer values for table number and capacity.");
+                alert.showAndWait();
+            } catch (IllegalArgumentException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Input");
+                alert.setHeaderText("Invalid table number or capacity");
+                alert.setContentText(ex.getMessage());
                 alert.showAndWait();
             }
         });

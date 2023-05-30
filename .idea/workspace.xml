@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="85dba10b-d985-4c12-8068-803cc6e4f951" name="Changes" comment="" />
+    <list default="true" id="85dba10b-d985-4c12-8068-803cc6e4f951" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/StaffManagerProjectMirko.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/StaffManagerProjectMirko.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/back/Table.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/back/Table.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/front/ReservationApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/front/ReservationApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/merged/MainMerged.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/merged/MainMerged.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/tables.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/tables.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/back_tests/MainTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/back_tests/MainTest.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -9,6 +21,16 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
   </component>
   <component name="ProjectId" id="2QRCvr5eGe6AOlWYELAsBuuqB9K" />
   <component name="ProjectViewState">
@@ -20,9 +42,101 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager" selected="Application.ReservationApp">
+    <configuration name="ReservationApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="front.ReservationApp" />
+      <module name="StaffManagerProjectMirko" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="front.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="StaffManagerProjectMirko" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="back_tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="back_tests" />
+      <option name="MAIN_CLASS_NAME" value="back_tests.MainTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainTest.testBothNegativeCapacityAndNegativeTableNumber" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="StaffManagerProjectMirko" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="back_tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="back_tests" />
+      <option name="MAIN_CLASS_NAME" value="back_tests.MainTest" />
+      <option name="METHOD_NAME" value="testBothNegativeCapacityAndNegativeTableNumber" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainTest.testNegativeCapacity" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="StaffManagerProjectMirko" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="back_tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="back_tests" />
+      <option name="MAIN_CLASS_NAME" value="back_tests.MainTest" />
+      <option name="METHOD_NAME" value="testNegativeCapacity" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainTest.testNegativeTableNumber" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="StaffManagerProjectMirko" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="back_tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="back_tests" />
+      <option name="MAIN_CLASS_NAME" value="back_tests.MainTest" />
+      <option name="METHOD_NAME" value="testNegativeTableNumber" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.ReservationApp" />
+        <item itemvalue="JUnit.MainTest" />
+        <item itemvalue="JUnit.MainTest.testBothNegativeCapacityAndNegativeTableNumber" />
+        <item itemvalue="JUnit.MainTest.testNegativeTableNumber" />
+        <item itemvalue="JUnit.MainTest.testNegativeCapacity" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -32,6 +146,7 @@
       <option name="presentableId" value="Default" />
       <updated>1685307243493</updated>
       <workItem from="1685307247480" duration="4000" />
+      <workItem from="1685431734042" duration="3922000" />
     </task>
     <servers />
   </component>

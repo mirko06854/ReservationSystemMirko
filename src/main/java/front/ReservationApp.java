@@ -88,24 +88,43 @@ public class ReservationApp extends Application {
             try {
                 tableNumber = Integer.parseInt(tableNumberField.getText());
                 capacity = Integer.parseInt(capacityField.getText());
+
+                if (tableNumber < 0 || capacity < 0) {
+                    throw new IllegalArgumentException("Table number and capacity cannot be negative.");
+                }
+
+                Reservation reservation = new Reservation(name, time, tableNumber, capacity);
+                reservations.add(reservation);
+
+                nameField.clear();
+                timeField.clear();
+                tableNumberField.clear();
+                capacityField.clear();
             } catch (NumberFormatException ex) {
+
+                /*   after parsing the tableNumber and capacity from the input fields, it checks if either of them is not an integer type.
+                 */
+
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid Input");
                 alert.setHeaderText("Invalid table number or capacity");
                 alert.setContentText("Please enter valid integer values for table number and capacity.");
                 alert.showAndWait();
-                return; // Stop further execution
+
+            } catch (IllegalArgumentException ex) {
+
+             /*   after parsing the tableNumber and capacity from the input fields, it checks if either of them is negative.
+             If so, an Alert is shown to notify the user about the invalid input, and
+             further execution is stopped by returning from the event handler.
+              */
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Input");
+                alert.setHeaderText("Invalid table number or capacity");
+                alert.setContentText(ex.getMessage());
+                alert.showAndWait();
             }
-
-            Reservation reservation = new Reservation(name, time, tableNumber, capacity);
-            reservations.add(reservation);
-
-            nameField.clear();
-            timeField.clear();
-            tableNumberField.clear();
-            capacityField.clear();
         });
-
 
         VBox layout = new VBox(10);
         layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, capacityLabel, capacityField, reserveButton, reservationTable);

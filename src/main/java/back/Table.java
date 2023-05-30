@@ -13,6 +13,15 @@ public class Table {
     private boolean isAvailable;
 
     public Table(int tableNumber, int capacity) {
+        if (tableNumber < 0 && capacity < 0) {
+            throw new IllegalArgumentException("Table number and capacity cannot both be negative.");
+        }
+        if (tableNumber < 0) {
+            throw new IllegalArgumentException("Table number cannot be negative.");
+        }
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Capacity cannot be negative.");
+        }
         this.tableNumber = tableNumber;
         this.capacity = capacity;
         this.isAvailable = false;
