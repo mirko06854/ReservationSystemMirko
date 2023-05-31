@@ -1,15 +1,8 @@
 [ {
-  "name" : "nfg",
-  "time" : "21",
-  "available" : false,
-  "tableNumber" : 3,
-  "capacity" : 4,
-  "isAvailable" : false
-}, {
-  "name" : "fghg",
-  "time" : "21",
+  "name" : "dfdfg",
+  "time" : "21:40",
   "available" : false,
   "tableNumber" : 6,
-  "capacity" : 5,
+  "capacity" : 4,
   "isAvailable" : false
 } ]

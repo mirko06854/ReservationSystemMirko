@@ -80,5 +80,11 @@ public class ReservationSystem {
         }
         return new ArrayList<>(); // Return an empty list if JSON reading fails
     }
+
+    public static void validateTableBookingTime(String time) {
+        if (!time.matches("^([01]?[0-9]|2[0-4]):[0-5][0-9]$")) {
+            throw new IllegalArgumentException("Invalid table booking time: " + time);
+        }
+    }
 }
 

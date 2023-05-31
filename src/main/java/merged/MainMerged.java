@@ -59,6 +59,9 @@ public class MainMerged extends Application {
                     throw new IllegalArgumentException("Table number and capacity cannot be negative.");
                 }
 
+                // Validate the table booking time
+                back.ReservationSystem.validateTableBookingTime(time);
+
                 Reservation reservation = new Reservation(name, time, tableNumber, capacity);
 
                 reservations.add(reservation);
@@ -81,13 +84,21 @@ public class MainMerged extends Application {
                 alert.setContentText("Please enter valid integer values for table number and capacity.");
                 alert.showAndWait();
             } catch (IllegalArgumentException ex) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Invalid Input");
-                alert.setHeaderText("Invalid table number or capacity");
-                alert.setContentText(ex.getMessage());
-                alert.showAndWait();
-            }
-        });
+                    if (ex.getMessage().equals("Invalid table booking time")) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid Input");
+                        alert.setHeaderText("Invalid table booking time");
+                        alert.setContentText(ex.getMessage());
+                        alert.showAndWait();
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid Input");
+                        alert.setHeaderText("Invalid table number or capacity");
+                        alert.setContentText(ex.getMessage());
+                        alert.showAndWait();
+                    }
+                }
+            });
 
         loadReservedTables();
 

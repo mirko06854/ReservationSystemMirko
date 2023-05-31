@@ -93,6 +93,9 @@ public class ReservationApp extends Application {
                     throw new IllegalArgumentException("Table number and capacity cannot be negative.");
                 }
 
+                // Validate the table booking time
+                validateTableBookingTime(time);
+
                 Reservation reservation = new Reservation(name, time, tableNumber, capacity);
                 reservations.add(reservation);
 
@@ -101,30 +104,20 @@ public class ReservationApp extends Application {
                 tableNumberField.clear();
                 capacityField.clear();
             } catch (NumberFormatException ex) {
-
-                /*   after parsing the tableNumber and capacity from the input fields, it checks if either of them is not an integer type.
-                 */
-
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid Input");
                 alert.setHeaderText("Invalid table number or capacity");
                 alert.setContentText("Please enter valid integer values for table number and capacity.");
                 alert.showAndWait();
-
             } catch (IllegalArgumentException ex) {
-
-             /*   after parsing the tableNumber and capacity from the input fields, it checks if either of them is negative.
-             If so, an Alert is shown to notify the user about the invalid input, and
-             further execution is stopped by returning from the event handler.
-              */
-
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid Input");
-                alert.setHeaderText("Invalid table number or capacity");
+                alert.setHeaderText("Invalid table booking time");
                 alert.setContentText(ex.getMessage());
                 alert.showAndWait();
             }
         });
+
 
         VBox layout = new VBox(10);
         layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, capacityLabel, capacityField, reserveButton, reservationTable);
@@ -163,6 +156,13 @@ public class ReservationApp extends Application {
     public static TextField getCapacityField () {
         TextField capacityField = new TextField();
         return capacityField ;
+    }
+
+    //the same method tested in the tests defined for the back end, to merge later in the merged package
+    private void validateTableBookingTime(String time) {
+        if (!time.matches("^([01]?[0-9]|2[0-4]):[0-5][0-9]$")) {
+            throw new IllegalArgumentException("Invalid table booking time: " + time);
+        }
     }
 }
 
