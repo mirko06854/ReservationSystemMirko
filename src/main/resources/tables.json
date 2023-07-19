@@ -1,8 +1,11 @@
 [ {
-  "name" : "dfdfg",
-  "time" : "21:40",
-  "available" : false,
-  "tableNumber" : 6,
-  "capacity" : 4,
-  "isAvailable" : false
+  "name" : "sd",
+  "time" : "21:30",
+  "tableNumber" : 4,
+  "capacity" : 5
+}, {
+  "name" : "aaaa",
+  "time" : "21:30",
+  "tableNumber" : 4,
+  "capacity" : 6
 } ]

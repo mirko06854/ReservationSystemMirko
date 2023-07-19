@@ -1,6 +1,8 @@
 package back;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -8,21 +10,18 @@ import javafx.beans.property.StringProperty;
 /** A class representing reservations, since the table may be reserved we thought to make this class being extended by Table, since is each table instance to be reserved
  *
  */
-public class Reservation extends Table {
+public class Reservation  {
     private final String name;
     private final String time;
 
-    public Reservation() {
-        super(0, 0); // Initialize tableNumber and capacity with default values
-        this.name = null;
-        this.time = null;
-    }
+    private Table table;
 
-
-    public Reservation(String name, String time, int tableNumber, int capacity) {
-        super(tableNumber, capacity);
+    @JsonCreator
+    public Reservation(@JsonProperty("name") String name, @JsonProperty("time") String time,
+                       @JsonProperty("tableNumber") int tableNumber, @JsonProperty("capacity") int capacity) {
         this.name = name;
         this.time = time;
+        this.table = new Table(tableNumber, capacity);
     }
 
     public String getName() {
@@ -33,16 +32,12 @@ public class Reservation extends Table {
         return time;
     }
 
-
-    @Override
     public int getTableNumber() {
-        return super.getTableNumber();
+        return table.getTableNumber();
     }
 
-
-    @Override
     public int getCapacity() {
-        return super.getCapacity();
+        return table.getCapacity();
     }
 
     // json ignore allow to omit some unwished information in the JSON retrieved in src/main/resources/tables.json
@@ -58,11 +53,11 @@ public class Reservation extends Table {
 
     @JsonIgnore
     public SimpleIntegerProperty getTableNumberProperty() {
-        return new SimpleIntegerProperty(super.getTableNumber());
+        return new SimpleIntegerProperty(table.getTableNumber());
     }
 
     @JsonIgnore
     public SimpleIntegerProperty getCapacityProperty() {
-        return new SimpleIntegerProperty(super.getCapacity());
+        return new SimpleIntegerProperty(table.getCapacity());
     }
 }

@@ -23,9 +23,10 @@ We are using Java 17.0.1. hence the maven compiler sources and target are 17 and
 Steps:
 
 *   clone the repo either by using terminal using: <span style="color: orange;">git clone https://github.com/mirko06854/StaffManagerProjectMirkoIsidoraNew.git </span> or using GitHub Desktop.
-*   do "mvn clean install" to clean and install the packages, even though you don't need to clean since the packages shouldn' t be uploaded on git due to our .gitignore file, but permorm clean just to be sure.
+*   do "mvn clean install" to clean and install the packages, even though you don't need to clean since the packages shouldn' t be uploaded on git due to our .gitignore file, but perform clean just to be sure.
 *  "mvn test" to run the tests
 *  for javadoc read below
+*  "mvn javafx:run" for running the application
 
 
 
