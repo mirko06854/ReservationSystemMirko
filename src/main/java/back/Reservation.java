@@ -3,14 +3,13 @@ package back;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-/** A class representing reservations, since the table may be reserved we thought to make this class being extended by Table, since is each table instance to be reserved
- *
- */
-public class Reservation  {
+/** A class representing reservations */
+public class Reservation {
     private final String name;
     private final String time;
 
@@ -40,8 +39,15 @@ public class Reservation  {
         return table.getCapacity();
     }
 
-    // json ignore allow to omit some unwished information in the JSON retrieved in src/main/resources/tables.json
-    @JsonIgnore
+    public boolean isAvailable() {
+        return table.isAvailable();
+    }
+
+    public void setAvailable(boolean available) {
+        table.setAvailable(available);
+    }
+
+    @JsonIgnore // Ignore these properties during JSON serialization
     public StringProperty getNameProperty() {
         return new SimpleStringProperty(name);
     }

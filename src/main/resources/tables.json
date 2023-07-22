@@ -1,11 +1,7 @@
 [ {
-  "name" : "sd",
-  "time" : "21:30",
-  "tableNumber" : 4,
-  "capacity" : 5
-}, {
-  "name" : "aaaa",
-  "time" : "21:30",
-  "tableNumber" : 4,
-  "capacity" : 6
+  "name" : "fds",
+  "time" : "22:40",
+  "tableNumber" : 6,
+  "capacity" : 4,
+  "available" : true
 } ]

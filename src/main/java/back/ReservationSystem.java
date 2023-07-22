@@ -9,25 +9,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationSystem {
-    private List<Table> reservations;
+    private List<Reservation> reservations;
     private List<Table> tables;
 
     public ReservationSystem() {
-        reservations = new ArrayList<Table>();
+        reservations = new ArrayList<>();
         tables = readTableDataFromJson();
     }
 
-    public void addReservation(Table reservation) {
+    public void addReservation(Reservation reservation) {
         if (isTableAvailable(reservation.getTableNumber())) {
             reservations.add(reservation);
-            updateTableAvailability(reservation.getTableNumber(), false);
+            updateTableAvailability(reservation.getTableNumber(), true);
             System.out.println("back.Reservation added: " + reservation);
         } else {
             System.out.println("back.Table not available for reservation: " + reservation.getTableNumber());
         }
     }
 
-    public void removeReservation(Table reservation) {
+    public void removeReservation(Reservation reservation) {
         if (reservations.remove(reservation)) {
             updateTableAvailability(reservation.getTableNumber(), true);
             System.out.println("back.Reservation removed: " + reservation);
@@ -36,7 +36,7 @@ public class ReservationSystem {
         }
     }
 
-    public void updateReservation(Table oldReservation, Table newReservation) {
+    public void updateReservation(Reservation oldReservation, Reservation newReservation) {
         if (reservations.contains(oldReservation)) {
             if (isTableAvailable(newReservation.getTableNumber())) {
                 reservations.remove(oldReservation);
@@ -55,26 +55,33 @@ public class ReservationSystem {
     public boolean isTableAvailable(int tableNumber) {
         for (Table table : tables) {
             if (table.getTableNumber() == tableNumber) {
-                return table.isAvailable();
+                return false;
             }
         }
-        return false; // back.Table not found, consider as unavailable
+        return true; // back.Table not found, consider as available
     }
 
     private void updateTableAvailability(int tableNumber, boolean isAvailable) {
         for (Table table : tables) {
             if (table.getTableNumber() == tableNumber) {
-                table.setAvailable(isAvailable);
+                table.setAvailable(false);
                 break;
             }
         }
     }
-
     private List<Table> readTableDataFromJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(new File("src/main/resources/tables.json"), new TypeReference<>() {
-            });
+            List<Table> tables = objectMapper.readValue(new File("src/main/resources/tables.json"), new TypeReference<List<Table>>() {});
+
+            // Set the isAvailable property of each table to false
+            for (Table table : tables) {
+                int tableNumber = table.getTableNumber();
+                boolean isAvailable = isTableAvailable(tableNumber);
+                table.setAvailable(isAvailable);
+            }
+
+            return tables;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,4 +94,3 @@ public class ReservationSystem {
         }
     }
 }
-

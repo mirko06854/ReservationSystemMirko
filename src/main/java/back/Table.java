@@ -9,7 +9,7 @@ public class Table {
     @JsonProperty("capacity")
     private int capacity;
 
-    @JsonProperty("isAvailable")
+    @JsonProperty("isAvailable") // Add this annotation to include the property in JSON serialization
     private boolean isAvailable;
 
     public Table(int tableNumber, int capacity) {
@@ -24,7 +24,7 @@ public class Table {
         }
         this.tableNumber = tableNumber;
         this.capacity = capacity;
-        this.isAvailable = false;
+        this.isAvailable = true; // Set the initial availability to true (assumption)
     }
 
     public Table() {
@@ -52,4 +52,3 @@ public class Table {
         return "Table " + tableNumber + " (Capacity: " + capacity + ")";
     }
 }
-
