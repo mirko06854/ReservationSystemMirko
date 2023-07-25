@@ -36,5 +36,22 @@ public class ReservationDisplay {
     public IntegerProperty capacityProperty() {
         return capacity;
     }
+
+    // Add getter methods for the private fields
+    public StringProperty getName() {
+        return name;
+    }
+
+    public StringProperty getTime() {
+        return time;
+    }
+
+    public IntegerProperty getTableNumber() {
+        return tableNumber;
+    }
+
+    public IntegerProperty getCapacity() {
+        return capacity;
+    }
 }
 
