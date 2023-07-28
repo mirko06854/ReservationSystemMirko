@@ -1,9 +1,6 @@
 package merged;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 /**  Since the Reservation class extends the Table class, this caused issues when using JavaFX's TableView, infact I couldn't see the content of table inserted in the GUI.
  * Therefore, to manage this issue, I created this separate class for displaying reservations in the table.**/
@@ -13,7 +10,6 @@ public class ReservationDisplay {
     private StringProperty time;
     private IntegerProperty tableNumber;
     private IntegerProperty capacity;
-
     private IntegerProperty remainingTime;
 
     public ReservationDisplay(String name, String time, int tableNumber, int capacity) {

@@ -132,20 +132,7 @@ public class MainMerged extends Application {
             }
         });
 
-        cleanButton.setOnAction(e -> {
-            serializeJsonFile();
-            // Refresh the table view after cleaning the JSON
-            reservationDisplays.clear();
-            reservationDisplays.addAll(reservations.stream()
-                    .map(reservation -> new ReservationDisplay(
-                            reservation.getName(),
-                            reservation.getTime(),
-                            reservation.getTableNumber(),
-                            reservation.getCapacity()
-                    ))
-                    .collect(Collectors.toList())
-            );
-        });
+        cleanButton.setOnAction(e ->  cleanJson());
 
         deleteButton.setOnAction(e -> {
             ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
@@ -306,6 +293,12 @@ public class MainMerged extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void cleanJson() {
+        reservations.clear();
+        reservationDisplays.clear();
+        serializeJsonFile();
     }
 
     @Override
