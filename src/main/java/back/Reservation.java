@@ -66,4 +66,8 @@ public class Reservation {
     public SimpleIntegerProperty getCapacityProperty() {
         return new SimpleIntegerProperty(table.getCapacity());
     }
+
+    public Table getTable() {
+        return table;
+    }
 }

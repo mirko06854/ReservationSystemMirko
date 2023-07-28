@@ -68,13 +68,19 @@ Test classes:
 
 [Frontend_test](../StaffManagerProjectMirkoIsidoraNew/target/site/testapidocs/front_tests)
 
-[Merged_test] (to be defined)
+[Merged_test](../StaffManagerProjectMirkoIsidoraNew/target/site/testapidocs/merged_tests)
 
  </div>
 </div>
 
-### For the presentation, some recent issues solved:
+### Some issues I faced:
 
-We had a problem into reading tables from json and deserialize them into the JavaFX GUI. The reason was simply because in the package back, in the class Reservation, there was no default constructor defined, so the tables wasn't written on the GUI!!
-So, since the Reservation class didn't have a default constructor, Jackson couldn't create an instance of the class during deserialization, resulting in the InvalidDefinitionException error.
+MainMergedTest had problematic tests:
+
+The tests were problematic due to using JavaFX timers in a non-JavaFX environment. These issues arise from timing discrepancies, lack of thread synchronization, and the absence of a JavaFX thread.
+To overcome these problems and ensure reliable testing for JavaFX timers, I used the <b> TestFX library. </b>
+This library creates a JavaFX environment during tests, enabling proper synchronization and accurate timer behavior
+verification. By using TestFX's sleep method, tests can simulate timer duration and improve testing accuracy.
+
+Now the test of MainMerged works in this way. The app is opened and the mouse moves automatically to book some tables. So one example table is booked and tested if after one minute is available or not. So you have to wait one minute for the test to be run. 
 

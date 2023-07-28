@@ -1,25 +1,37 @@
 [ {
-  "name" : "table1",
-  "time" : "21:40",
-  "tableNumber" : 2,
-  "capacity" : 4,
+  "name" : "John Doe",
+  "time" : "3:00",
+  "tableNumber" : 4,
+  "capacity" : 2,
+  "table" : {
+    "available" : true,
+    "tableNumber" : 4,
+    "capacity" : 2,
+    "isAvailable" : true
+  },
   "available" : true
 }, {
-  "name" : "fghfgh",
-  "time" : "2:10",
-  "tableNumber" : 3,
-  "capacity" : 6,
-  "available" : true
-}, {
-  "name" : "tfhfgh",
-  "time" : "22:15",
-  "tableNumber" : 2,
-  "capacity" : 7,
-  "available" : true
-}, {
-  "name" : "ffgjhfgfg",
-  "time" : "2:10",
-  "tableNumber" : 7,
+  "name" : "ikuiljkl",
+  "time" : "22:10",
+  "tableNumber" : 5,
   "capacity" : 3,
+  "table" : {
+    "available" : true,
+    "tableNumber" : 5,
+    "capacity" : 3,
+    "isAvailable" : true
+  },
+  "available" : true
+}, {
+  "name" : "fgfh",
+  "time" : "22:30",
+  "tableNumber" : 8,
+  "capacity" : 4,
+  "table" : {
+    "available" : true,
+    "tableNumber" : 8,
+    "capacity" : 4,
+    "isAvailable" : true
+  },
   "available" : true
 } ]

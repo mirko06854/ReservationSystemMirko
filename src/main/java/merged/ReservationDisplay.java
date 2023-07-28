@@ -14,11 +14,14 @@ public class ReservationDisplay {
     private IntegerProperty tableNumber;
     private IntegerProperty capacity;
 
+    private IntegerProperty remainingTime;
+
     public ReservationDisplay(String name, String time, int tableNumber, int capacity) {
         this.name = new SimpleStringProperty(name);
         this.time = new SimpleStringProperty(time);
         this.tableNumber = new SimpleIntegerProperty(tableNumber);
         this.capacity = new SimpleIntegerProperty(capacity);
+        this.remainingTime = new SimpleIntegerProperty(); // remaining time
     }
 
     public StringProperty nameProperty() {
@@ -52,6 +55,18 @@ public class ReservationDisplay {
 
     public IntegerProperty getCapacity() {
         return capacity;
+    }
+
+    public int getRemainingTime() {
+        return remainingTime.get();
+    }
+
+    public IntegerProperty remainingTimeProperty() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(int minutes) {
+       remainingTime.set(minutes);
     }
 }
 
