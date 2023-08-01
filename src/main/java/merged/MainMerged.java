@@ -66,12 +66,6 @@ public class MainMerged extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        Timeline availabilityTimeline = new Timeline(
-                new KeyFrame(Duration.minutes(1), e -> resetTableAvailability())
-        );
-        availabilityTimeline.setCycleCount(Timeline.INDEFINITE);
-        availabilityTimeline.play();
-
         reserveButton.setOnAction(e -> {
             String name = nameField.getText();
             String time = timeField.getText();
@@ -99,8 +93,6 @@ public class MainMerged extends Application {
                         reservation.getTableNumber(),
                         reservation.getCapacity()
                 ));
-
-                startTableTimer(reservation, Duration.minutes(1)); // Start a timer for 1 minute
 
                 updateTableAvailability(reservation.getTableNumber(), false); // Set the table as not available
                 serializeJsonFile(); // Save changes to the JSON file
@@ -218,62 +210,6 @@ public class MainMerged extends Application {
             }
         }
         return null;
-    }
-
-    /**
-     * Starts a timer for the specified reservation and duration. When the timer expires,
-     * the corresponding table is set as available again, and the reservation display is updated.
-     *
-     * @param reservation The reservation for which the timer is started.
-     * @param duration    The duration of the timer.
-     */
-    public void startTableTimer(Reservation reservation, Duration duration) {
-        Table table = reservation.getTable();
-        table.setAvailable(false); // Set the table as not available
-
-        final Duration[] mutableDuration = {duration}; // Array to allow modification of the duration
-
-        Timeline tableTimer = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> {
-                    mutableDuration[0] = mutableDuration[0].subtract(Duration.seconds(1));
-                    if (mutableDuration[0].lessThanOrEqualTo(Duration.ZERO)) { // Check if duration is negative or zero
-                        table.setAvailable(true); // Table is available after the timer ends
-                        stopTableTimer(reservation); // Stop the timer
-                        updateTableAvailability(table.getTableNumber(), true); // Save changes to JSON for the current reservation
-                    } else {
-                        // Update the reservation display to show the remaining time
-                        reservationDisplays.stream()
-                                .filter(display -> display.getTableNumber().get() == table.getTableNumber())
-                                .findFirst()
-                                .ifPresent(display -> display.setRemainingTime((int) mutableDuration[0].toMinutes()));
-                    }
-                })
-        );
-
-        tableTimer.setCycleCount((int) duration.toSeconds());
-        tableTimer.play();
-        tableTimers.put(table, tableTimer); // Save the timer in the map
-    }
-
-    private void stopTableTimer(Reservation reservation) {
-        Table table = reservation.getTable();
-        Timeline timer = tableTimers.remove(table);
-        if (timer != null) {
-            timer.stop();
-        }
-    }
-
-
-    // Method to reset table availability to true after 30 minutes
-    private void resetTableAvailability() {
-        updateTableAvailabilityForAll(true); // Set all tables as available
-        serializeJsonFile(); // Save changes to the JSON file
-    }
-
-    private void updateTableAvailabilityForAll(boolean isAvailable) {
-        for (Reservation reservation : reservations) {
-            reservation.setAvailable(isAvailable);
-        }
     }
 
     private void updateTableAvailability(int tableNumber, boolean isAvailable) {
