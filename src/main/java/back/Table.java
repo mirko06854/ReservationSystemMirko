@@ -9,10 +9,16 @@ public class Table {
     @JsonProperty("capacity")
     private int capacity;
 
-    @JsonProperty("isAvailable") // Add this annotation to include the property in JSON serialization
+    @JsonProperty("available")
     private boolean isAvailable;
 
-    public Table(int tableNumber, int capacity) {
+    @JsonProperty("arrivalTime")
+    private String arrivalTime;
+
+    @JsonProperty("leavingTime")
+    private String leavingTime;
+
+    public Table(int tableNumber, int capacity,String arrivalTime, String leavingTime) {
         if (tableNumber < 0 && capacity < 0) {
             throw new IllegalArgumentException("Table number and capacity cannot both be negative.");
         }
@@ -24,6 +30,8 @@ public class Table {
         }
         this.tableNumber = tableNumber;
         this.capacity = capacity;
+        this.arrivalTime = arrivalTime;
+        this.leavingTime = leavingTime;
         this.isAvailable = true; // Set the initial availability to true (assumption)
     }
 
@@ -45,6 +53,14 @@ public class Table {
 
     public void setAvailable(boolean available) {
         isAvailable = available;
+    }
+
+    public String getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public String getLeavingTime() {
+        return leavingTime;
     }
 
     @Override

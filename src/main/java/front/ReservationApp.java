@@ -34,8 +34,8 @@ public class ReservationApp extends Application {
         TableColumn<Reservation, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(data -> data.getValue().getNameProperty());
 
-        TableColumn<Reservation, String> timeColumn = new TableColumn<>("Time");
-        timeColumn.setCellValueFactory(data -> data.getValue().getTimeProperty());
+        TableColumn<Reservation, String> timeColumn = new TableColumn<>("arrivalTime");
+        timeColumn.setCellValueFactory(data -> data.getValue().getArrivalTimeProperty());
 
         TableColumn<Reservation, Integer> tableNumberColumn = new TableColumn<>("Table Number");
         tableNumberColumn.setCellValueFactory(data -> data.getValue().getTableNumberProperty().asObject());
@@ -81,7 +81,7 @@ public class ReservationApp extends Application {
 
         reserveButton.setOnAction(e -> {
             String name = nameField.getText();
-            String time = timeField.getText();
+            String arrivalTime = timeField.getText(); // Changed from time to arrivalTime
             int tableNumber;
             int capacity;
 
@@ -94,9 +94,9 @@ public class ReservationApp extends Application {
                 }
 
                 // Validate the table booking time
-                validateTableBookingTime(time);
+                validateTableBookingTime(arrivalTime); // Changed from time to arrivalTime
 
-                Reservation reservation = new Reservation(name, time, tableNumber, capacity);
+                Reservation reservation = new Reservation(name, arrivalTime, tableNumber, capacity);
                 reservations.add(reservation);
 
                 nameField.clear();
@@ -117,6 +117,7 @@ public class ReservationApp extends Application {
                 alert.showAndWait();
             }
         });
+
 
 
         VBox layout = new VBox(10);

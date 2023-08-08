@@ -1,6 +1,7 @@
 package merged;
 
 import back.Reservation;
+import back.ReservationSystem;
 import back.Table;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -33,6 +34,9 @@ public class MainMerged extends Application {
     private Map<Table, Timeline> tableTimers = new HashMap<>(); // mapping each table with its timeline
 
     private TableView<ReservationDisplay> reservationTable; // Declare the reservationTable variable here
+
+    private ReservationSystem reservationSystem = new ReservationSystem();
+
 
 
     public static void main(String[] args) {
@@ -83,18 +87,37 @@ public class MainMerged extends Application {
                 // Validate the table booking time
                 back.ReservationSystem.validateTableBookingTime(time);
 
+                // Parse the time to extract hours and minutes
+                String[] timeParts = time.split(":");
+                int hours = Integer.parseInt(timeParts[0]);
+                int minutes = Integer.parseInt(timeParts[1]);
+
+                // Calculate the departure time (2 hours later)
+                int departureHours = (hours + 2) % 24; // Handle wrapping around midnight
+                String departureTime = String.format("%02d:%02d", departureHours, minutes);
+
+                // Check if the table is already reserved during the booking time and departure time
+                if (isTableReserved(tableNumber, time, departureTime)) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Table Already Reserved");
+                    alert.setHeaderText("Table " + tableNumber + " is already reserved during the selected time.");
+                    alert.setContentText("Please try a different table number or book at another time slot if all tables are booked.");
+                    alert.showAndWait();
+                    return; // Exit the method without adding the reservation
+                }
+
                 Reservation reservation = new Reservation(name, time, tableNumber, capacity);
 
                 reservations.add(reservation);
 
                 reservationDisplays.add(new ReservationDisplay(
                         reservation.getName(),
-                        reservation.getTime(),
+                        reservation.getArrivalTime(),
                         reservation.getTableNumber(),
                         reservation.getCapacity()
                 ));
 
-                updateTableAvailability(reservation.getTableNumber(), false); // Set the table as not available
+                updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(),reservation.getLeavingTime()); // Set the table as not available
                 serializeJsonFile(); // Save changes to the JSON file
 
                 nameField.clear();
@@ -124,6 +147,7 @@ public class MainMerged extends Application {
             }
         });
 
+
         cleanButton.setOnAction(e ->  cleanJson());
 
         deleteButton.setOnAction(e -> {
@@ -133,7 +157,7 @@ public class MainMerged extends Application {
                 if (reservation != null) {
                     reservations.remove(reservation);
                     reservationDisplays.remove(selectedReservation);
-                    updateTableAvailability(reservation.getTableNumber(), true); // Set the table as available again
+                    updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime()); // Set the table as available again
                     serializeJsonFile(); // Save changes to the JSON file
                 }
             }
@@ -177,6 +201,10 @@ public class MainMerged extends Application {
         reservationTable.setId("reservationTable");
     }
 
+    private boolean isTableReserved(int tableNumber, String arrivalTime,String leavingTime) {
+        return reservationSystem.isTableReserved(tableNumber, arrivalTime, leavingTime);
+    }
+
     private void loadReservedTables() {
         try {
             File file = new File("src/main/resources/tables.json");
@@ -186,7 +214,7 @@ public class MainMerged extends Application {
                 for (Reservation reservation : loadedTables) {
                     ReservationDisplay display = new ReservationDisplay(
                             reservation.getName(),
-                            reservation.getTime(),
+                            reservation.getArrivalTime(),
                             reservation.getTableNumber(),
                             reservation.getCapacity()
                     );
@@ -203,7 +231,7 @@ public class MainMerged extends Application {
     private Reservation findReservation(ReservationDisplay selectedReservation) {
         for (Reservation reservation : reservations) {
             if (reservation.getName().equals(selectedReservation.getName().get()) &&
-                    reservation.getTime().equals(selectedReservation.getTime().get()) &&
+                    reservation.getArrivalTime().equals(selectedReservation.getTime().get()) &&
                     reservation.getTableNumber() == selectedReservation.getTableNumber().get() &&
                     reservation.getCapacity() == selectedReservation.getCapacity().get()) {
                 return reservation;
@@ -212,14 +240,20 @@ public class MainMerged extends Application {
         return null;
     }
 
-    private void updateTableAvailability(int tableNumber, boolean isAvailable) {
+    private void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime) {
         for (Reservation reservation : reservations) {
             if (reservation.getTableNumber() == tableNumber) {
-                reservation.setAvailable(isAvailable);
-                break;
+                if (reservation.getLeavingTime().compareTo(newReservationArrivalTime) <= 0 ||
+                        reservation.getArrivalTime().compareTo(newReservationLeavingTime) >= 0) {
+                    reservation.setAvailable(true); // Table is available during the new reservation's time
+                } else {
+                    reservation.setAvailable(false); // Table is reserved during the new reservation's time
+                }
+                break; // No need to continue checking after updating one reservation
             }
         }
     }
+
 
     private void serializeJsonFile() {
         File file = new File("src/main/resources/tables.json");
