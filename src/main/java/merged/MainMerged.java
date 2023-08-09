@@ -127,7 +127,9 @@ public class MainMerged extends Application {
 
                 Duration timeUntilUnlock = calculateDuration(arrivalTime, unlockTime);
 
-            // Create a PauseTransition to delay unlocking the table. This strategy has been chosen to keep syncronous updating of reservation and serialization, otherwise I could have used also a Timeline and keyframe! (async synch)
+            /* Created a PauseTransition to delay unlocking the table. This strategy has been chosen to keep synchronous updating of reservations
+            and their serialization into JSON, otherwise I could have used also a Timeline and keyframe! (async synchronization)
+             */
                 PauseTransition unlockTransition = new PauseTransition(timeUntilUnlock);
                 unlockTransition.setOnFinished(evt -> {
                     updateTableAvailability(reservation.getTableNumber(), "", ""); // Unlock the table
@@ -178,6 +180,14 @@ public class MainMerged extends Application {
                 if (reservation != null) {
                     reservations.remove(reservation);
                     reservationDisplays.remove(selectedReservation);
+
+                    // Cancel the associated PauseTransition (if exists)
+                    PauseTransition tableTransition = tableTimers.get(reservation.getTable());
+                    if (tableTransition != null) {
+                        tableTransition.stop();
+                        tableTimers.remove(reservation.getTable());
+                    }
+
                     updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime()); // Set the table as available again
                     serializeJsonFile(); // Save changes to the JSON file
                 }
@@ -298,9 +308,15 @@ public class MainMerged extends Application {
         serializeJsonFile();
     }
 
-    // Calculate the duration between two LocalTime instances
+    /**
+     * Calculates the duration between two LocalTime instances.
+     *
+     * @param startTime The starting time.
+     * @param endTime The ending time.
+     * @return A Duration object representing the duration between the two times.
+     */
     private Duration calculateDuration(LocalTime startTime, LocalTime endTime) {
-        long startSeconds = startTime.toSecondOfDay();
+        long startSeconds = startTime.toSecondOfDay();   // "toSecondOfDay()" returns the number of seconds since midnight, which eliminates any timezone-related concerns
         long endSeconds = endTime.toSecondOfDay();
         long durationSeconds = endSeconds - startSeconds;
 
