@@ -106,6 +106,15 @@ public class MainMerged extends Application {
                     return; // Exit the method without adding the reservation
                 }
 
+                if (!updateTableAvailability(tableNumber, time, departureTime)) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Table Not Available");
+                    alert.setHeaderText("Table " + tableNumber + " is not available during the selected time.");
+                    alert.setContentText("Please try a different table number or book at another time slot.");
+                    alert.showAndWait();
+                    return; // Exit the method without adding the reservation
+                }
+
                 Reservation reservation = new Reservation(name, time, tableNumber, capacity);
 
                 reservations.add(reservation);
@@ -240,19 +249,20 @@ public class MainMerged extends Application {
         return null;
     }
 
-    private void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime) {
+    private boolean updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime) {
         for (Reservation reservation : reservations) {
             if (reservation.getTableNumber() == tableNumber) {
                 if (reservation.getLeavingTime().compareTo(newReservationArrivalTime) <= 0 ||
                         reservation.getArrivalTime().compareTo(newReservationLeavingTime) >= 0) {
-                    reservation.setAvailable(true); // Table is available during the new reservation's time
+                    return true; // Table is available during the new reservation's time
                 } else {
-                    reservation.setAvailable(false); // Table is reserved during the new reservation's time
+                    return false; // Table is reserved during the new reservation's time
                 }
-                break; // No need to continue checking after updating one reservation
             }
         }
+        return true; // If no reservation found for the table, consider it available
     }
+
 
 
     private void serializeJsonFile() {
