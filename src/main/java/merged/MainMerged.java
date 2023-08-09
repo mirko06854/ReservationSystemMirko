@@ -5,8 +5,7 @@ import back.ReservationSystem;
 import back.Table;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,21 +16,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import javafx.util.Duration;
 
 public class MainMerged extends Application {
     private ObservableList<Reservation> reservations = FXCollections.observableArrayList();
     private ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private Map<Table, Timeline> tableTimers = new HashMap<>(); // mapping each table with its timeline
+    private Map<Table, PauseTransition> tableTimers = new HashMap<Table, PauseTransition>(); // mapping each table with its timeline
 
     private TableView<ReservationDisplay> reservationTable; // Declare the reservationTable variable here
 
@@ -126,13 +122,29 @@ public class MainMerged extends Application {
                         reservation.getCapacity()
                 ));
 
-                updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(),reservation.getLeavingTime()); // Set the table as not available
+                LocalTime arrivalTime = LocalTime.parse(reservation.getArrivalTime());
+                LocalTime unlockTime = arrivalTime.plusHours(2);
+
+                Duration timeUntilUnlock = calculateDuration(arrivalTime, unlockTime);
+
+            // Create a PauseTransition to delay unlocking the table. This strategy has been chosen to keep syncronous updating of reservation and serialization, otherwise I could have used also a Timeline and keyframe! (async synch)
+                PauseTransition unlockTransition = new PauseTransition(timeUntilUnlock);
+                unlockTransition.setOnFinished(evt -> {
+                    updateTableAvailability(reservation.getTableNumber(), "", ""); // Unlock the table
+                    serializeJsonFile();
+                });
+                unlockTransition.play();
+
                 serializeJsonFile(); // Save changes to the JSON file
+
+                // Store the PauseTransition in the tableTimers map
+                tableTimers.put(reservation.getTable(), unlockTransition);
 
                 nameField.clear();
                 timeField.clear();
                 tableNumberField.clear();
                 capacityField.clear();
+
             } catch (NumberFormatException ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid Input");
@@ -264,7 +276,6 @@ public class MainMerged extends Application {
     }
 
 
-
     private void serializeJsonFile() {
         File file = new File("src/main/resources/tables.json");
         try {
@@ -285,5 +296,14 @@ public class MainMerged extends Application {
     public void stop() {
         // Save changes to the JSON file when the application is closed
         serializeJsonFile();
+    }
+
+    // Calculate the duration between two LocalTime instances
+    private Duration calculateDuration(LocalTime startTime, LocalTime endTime) {
+        long startSeconds = startTime.toSecondOfDay();
+        long endSeconds = endTime.toSecondOfDay();
+        long durationSeconds = endSeconds - startSeconds;
+
+        return new Duration(durationSeconds * 1000);   // because javafx.util.Duration uses such unit
     }
 }
