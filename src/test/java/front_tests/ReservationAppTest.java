@@ -39,7 +39,7 @@ class ReservationAppTest {
         String invalidCapacity = "5 guests";
 
         // Call the addReservation method
-        assertThrows(NumberFormatException.class, () -> reservationApp.addReservation(name, arrivalTime,Integer.parseInt(invalidTableNumber), Integer.parseInt(invalidCapacity)));
+        assertThrows(NumberFormatException.class, () -> reservationApp.addReservation(name, arrivalTime, Integer.parseInt(invalidTableNumber), Integer.parseInt(invalidCapacity)));
 
         // Assert that no reservation is added to the reservations list
         // assertEquals(0, reservationApp.getReservations().size());

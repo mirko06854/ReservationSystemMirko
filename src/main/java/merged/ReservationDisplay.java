@@ -2,8 +2,10 @@ package merged;
 
 import javafx.beans.property.*;
 
-/**  Since the Reservation class extends the Table class, this caused issues when using JavaFX's TableView, infact I couldn't see the content of table inserted in the GUI.
- * Therefore, to manage this issue, I created this separate class for displaying reservations in the table.**/
+/**
+ * Since the Reservation class extends the Table class, this caused issues when using JavaFX's TableView, infact I couldn't see the content of table inserted in the GUI.
+ * Therefore, to manage this issue, I created this separate class for displaying reservations in the table.
+ **/
 
 public class ReservationDisplay {
     private StringProperty name;
@@ -62,7 +64,7 @@ public class ReservationDisplay {
     }
 
     public void setRemainingTime(int minutes) {
-       remainingTime.set(minutes);
+        remainingTime.set(minutes);
     }
 }
 

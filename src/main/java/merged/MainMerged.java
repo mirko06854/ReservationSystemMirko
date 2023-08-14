@@ -16,13 +16,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class MainMerged extends Application {
+public class MainMerged extends Application implements MainMergedHelper {
     private ObservableList<Reservation> reservations = FXCollections.observableArrayList();
     private ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -48,8 +49,8 @@ public class MainMerged extends Application {
     Label peopleNumberLabel = new Label("people:");
     TextField peopleNumberField = new TextField();
 
-    Label  disabilitiesPeopleNumberLabel = new Label("people with disabilities:");
-    TextField  disabilitiesPeopleNumberField = new TextField();
+    Label disabilitiesPeopleNumberLabel = new Label("people with disabilities:");
+    TextField disabilitiesPeopleNumberField = new TextField();
 
     Button reserveButton = new Button("Reserve");
     Button cleanButton = new Button("Clean JSON");
@@ -216,7 +217,7 @@ public class MainMerged extends Application {
                         tableTransition.stop();
                         tableTimers.remove(reservation.getTable());
                     }
-                    updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(),getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
+                    updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
                     serializeJsonFile(); // Save changes to the JSON file
                 }
             }
@@ -242,7 +243,7 @@ public class MainMerged extends Application {
         reservationTable.setItems(reservationDisplays);
 
         layout = new VBox(10);
-        layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, capacityLabel, capacityField,  peopleNumberLabel, peopleNumberField,
+        layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, capacityLabel, capacityField, peopleNumberLabel, peopleNumberField,
                 disabilitiesPeopleNumberLabel, disabilitiesPeopleNumberField, reserveButton, deleteButton, cleanButton, reservationTable);
         layout.setPadding(new Insets(10));
         scene = new Scene(layout, 400, 400);
@@ -261,11 +262,11 @@ public class MainMerged extends Application {
         reservationTable.setId("reservationTable");
     }
 
-    private boolean isTableReserved(int tableNumber, String arrivalTime,String leavingTime) {
+    public boolean isTableReserved(int tableNumber, String arrivalTime, String leavingTime) {
         return reservationSystem.isTableReserved(tableNumber, arrivalTime, leavingTime);
     }
 
-    private void loadReservedTables() {
+    public void loadReservedTables() {
         try {
             File file = new File("src/main/resources/tables.json");
             if (file.exists()) {
@@ -287,8 +288,7 @@ public class MainMerged extends Application {
         }
     }
 
-    // Method to find the Reservation object corresponding to the selected ReservationDisplay
-    private Reservation findReservation(ReservationDisplay selectedReservation) {
+    public Reservation findReservation(ReservationDisplay selectedReservation) {
         for (Reservation reservation : reservations) {
             if (reservation.getName().equals(selectedReservation.getName().get()) &&
                     reservation.getArrivalTime().equals(selectedReservation.getTime().get()) &&
@@ -300,7 +300,7 @@ public class MainMerged extends Application {
         return null;
     }
 
-    private boolean updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory) {
+    public boolean updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory) {
         for (Reservation reservation : reservations) {
             if (reservation.getTableNumber() == tableNumber) {
                 LocalTime existingArrivalTime = LocalTime.parse(reservation.getArrivalTime());
@@ -319,7 +319,7 @@ public class MainMerged extends Application {
         return true; // Table is available
     }
 
-    private void serializeJsonFile() {
+    public void serializeJsonFile() {
         File file = new File("src/main/resources/tables.json");
         try {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -328,7 +328,8 @@ public class MainMerged extends Application {
             e.printStackTrace();
         }
     }
-    private void cleanJson() {
+
+    public void cleanJson() {
         reservations.clear();
         reservationDisplays.clear();
         serializeJsonFile();
@@ -340,14 +341,7 @@ public class MainMerged extends Application {
         serializeJsonFile();
     }
 
-    /**
-     * Calculates the duration between two LocalTime instances.
-     *
-     * @param startTime The starting time.
-     * @param endTime The ending time.
-     * @return A Duration object representing the duration between the two times.
-     */
-    private Duration calculateDuration(LocalTime startTime, LocalTime endTime) {
+    public Duration calculateDuration(LocalTime startTime, LocalTime endTime) {
         long startSeconds = startTime.toSecondOfDay();   // "toSecondOfDay()" returns the number of seconds since midnight, which eliminates any timezone-related concerns
         long endSeconds = endTime.toSecondOfDay();
         long durationSeconds = endSeconds - startSeconds;
@@ -355,7 +349,7 @@ public class MainMerged extends Application {
         return new Duration(durationSeconds * 1000);   // because javafx.util.Duration uses such unit
     }
 
-    private String getCategoryForTable(int tableNumber) {
+    public String getCategoryForTable(int tableNumber) {
         if (tableNumber >= 1 && tableNumber <= 5) {
             return "Normal";
         } else if (tableNumber >= 6 && tableNumber <= 10) {
@@ -365,7 +359,7 @@ public class MainMerged extends Application {
         }
     }
 
-    private boolean isReservationConflicting(Reservation newReservation) {
+    public boolean isReservationConflicting(Reservation newReservation) {
         for (Reservation existingReservation : reservations) {
             if (existingReservation.getTableNumber() == newReservation.getTableNumber()) {
                 LocalTime existingArrival = LocalTime.parse(existingReservation.getArrivalTime());
@@ -382,8 +376,7 @@ public class MainMerged extends Application {
         return false; // No conflicts found
     }
 
-    // Helper method to get the last departure time for a given table
-    private LocalTime getLastDepartureTimeForTable(int tableNumber) {
+    public LocalTime getLastDepartureTimeForTable(int tableNumber) {
         LocalTime lastDepartureTime = LocalTime.MIN;
         for (Reservation reservation : reservations) {
             if (reservation.getTableNumber() == tableNumber) {
@@ -396,26 +389,26 @@ public class MainMerged extends Application {
         return lastDepartureTime;
     }
 
-    private void validateInputValues(int tableNumber, int capacity, int people, int disabilitiesPeople) {
+    public void validateInputValues(int tableNumber, int capacity, int people, int disabilitiesPeople) {
         if (tableNumber < 1 || capacity < 0 || people < 0 || disabilitiesPeople < 0) {
             showInvalidInputAlert("Invalid input values. Please enter positive values for all fields.");
         }
     }
 
-    private void validateTableNumber(int tableNumber) {
+    public void validateTableNumber(int tableNumber) {
         if (tableNumber > 10) {
             showInvalidInputAlert("Table number " + tableNumber + " is not available for reservations. Please select a table with a number less than 10.");
         }
     }
 
-    private LocalTime calculateArrivalTime(String time) {
+    public LocalTime calculateArrivalTime(String time) {
         String[] timeParts = time.split(":");
         int hours = Integer.parseInt(timeParts[0]);
         int minutes = Integer.parseInt(timeParts[1]);
         return LocalTime.of(hours, minutes);
     }
 
-    private boolean isReservationOverlapping(int tableNumber, LocalTime newArrivalTime, LocalTime newDepartureTime) {
+    public boolean isReservationOverlapping(int tableNumber, LocalTime newArrivalTime, LocalTime newDepartureTime) {
         for (Reservation existingReservation : reservations) {
             if (existingReservation.getTableNumber() == tableNumber) {
                 LocalTime existingArrival = LocalTime.parse(existingReservation.getArrivalTime());
@@ -429,18 +422,19 @@ public class MainMerged extends Application {
         return false; // No conflicts found
     }
 
-   private void showOverlapAlert() {
+    public void showOverlapAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Reservation Overlap");
         alert.setHeaderText("The new reservation overlaps with an existing reservation.");
         alert.setContentText("Please select a different time or table.");
         alert.showAndWait();
     }
-    private String calculateCategory(int people, int disabilitiesPeople) {
-        return reservationSystem.calculateCategory(people,disabilitiesPeople);
+
+    public String calculateCategory(int people, int disabilitiesPeople) {
+        return reservationSystem.calculateCategory(people, disabilitiesPeople);
     }
 
-    private boolean validateTableCategory(int tableNumber, int capacity, String category) {
+    public boolean validateTableCategory(int tableNumber, int capacity, String category) {
         String selectedTableCategory = getCategoryForTable(tableNumber);
         int calculatedCapacity = Integer.parseInt(peopleNumberField.getText()) + Integer.parseInt(disabilitiesPeopleNumberField.getText());
 
@@ -458,7 +452,7 @@ public class MainMerged extends Application {
     }
 
 
-    private void showReservedAlert(int tableNumber, String time) {
+    public void showReservedAlert(int tableNumber, String time) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Table Already Reserved");
         alert.setHeaderText("Table " + tableNumber + " is already reserved during the selected time.");
@@ -466,17 +460,15 @@ public class MainMerged extends Application {
         alert.showAndWait();
     }
 
-    private void addReservation(String name, String time, int tableNumber, int capacity) {
+    public void addReservation(String name, String time, int tableNumber, int capacity) {
         Reservation reservation = new Reservation(name, time, tableNumber, capacity);
         reservations.add(reservation);
-
         reservationDisplays.add(new ReservationDisplay(
                 reservation.getName(),
                 reservation.getArrivalTime(),
                 reservation.getTableNumber(),
                 reservation.getCapacity()
         ));
-
         LocalTime arrivalTime = LocalTime.parse(reservation.getArrivalTime());
         LocalTime unlockTime = arrivalTime.plusHours(2);
 
@@ -500,14 +492,14 @@ public class MainMerged extends Application {
         clearInputFields();
     }
 
-    private void clearInputFields() {
+    public void clearInputFields() {
         nameField.clear();
         timeField.clear();
         tableNumberField.clear();
         capacityField.clear();
     }
 
-    private void showInvalidNumberAlert() {
+    public void showInvalidNumberAlert() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Invalid Input");
         alert.setHeaderText("Invalid table number or capacity");
@@ -515,7 +507,7 @@ public class MainMerged extends Application {
         alert.showAndWait();
     }
 
-    private void showInvalidInputAlert(String message) {
+    public void showInvalidInputAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Invalid Input");
         alert.setHeaderText("Invalid input values");

@@ -9,8 +9,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-/** This is just the front end, not retrieving any JSON
- *
+/**
+ * This is just the front end, not retrieving any JSON
  */
 
 public class ReservationApp extends Application {
@@ -119,7 +119,6 @@ public class ReservationApp extends Application {
         });
 
 
-
         VBox layout = new VBox(10);
         layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, capacityLabel, capacityField, reserveButton, reservationTable);
         layout.setSpacing(10);
@@ -152,11 +151,12 @@ public class ReservationApp extends Application {
 
     public static TextField getTableNumberField() {
         TextField tableNumberField = new TextField();
-        return tableNumberField ;
+        return tableNumberField;
     }
-    public static TextField getCapacityField () {
+
+    public static TextField getCapacityField() {
         TextField capacityField = new TextField();
-        return capacityField ;
+        return capacityField;
     }
 
     //the same method tested in the tests defined for the back end, to merge later in the merged package

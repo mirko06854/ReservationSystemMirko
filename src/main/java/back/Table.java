@@ -18,7 +18,7 @@ public class Table {
     @JsonProperty("leavingTime")
     private String leavingTime;
 
-    public Table(int tableNumber, int capacity,String arrivalTime, String leavingTime) {
+    public Table(int tableNumber, int capacity, String arrivalTime, String leavingTime) {
         if (tableNumber < 0 && capacity < 0) {
             throw new IllegalArgumentException("Table number and capacity cannot both be negative.");
         }

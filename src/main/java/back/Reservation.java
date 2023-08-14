@@ -15,7 +15,7 @@ public class Reservation {
 
     private String category;
 
-    public Reservation(@JsonProperty("name") String name,  @JsonProperty("arrivalTime") String arrivalTime,
+    public Reservation(@JsonProperty("name") String name, @JsonProperty("arrivalTime") String arrivalTime,
                        @JsonProperty("tableNumber") int tableNumber, @JsonProperty("capacity") int capacity) {
         this.name = name;
         this.arrivalTime = arrivalTime;
@@ -51,6 +51,7 @@ public class Reservation {
     public void setAvailable(boolean available) {
         table.setAvailable(available);
     }
+
     @JsonIgnore
     public StringProperty getNameProperty() {
         return new SimpleStringProperty(name);
@@ -82,6 +83,7 @@ public class Reservation {
     public Table getTable() {
         return table;
     }
+
     private String calculateLeavingTime(String arrivalTime) {
         // Parse the arrival time to extract hours and minutes
         String[] timeParts = arrivalTime.split(":");

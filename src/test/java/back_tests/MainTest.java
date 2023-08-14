@@ -34,7 +34,7 @@ public class MainTest {
 
     @Test
     public void testSerializationDeserialization() throws IOException {
-        Table originalTable = new Table(1, 4,"21:30","23:30");
+        Table originalTable = new Table(1, 4, "21:30", "23:30");
         originalTable.setAvailable(true);
 
         objectMapper.writeValue(tempFile, originalTable);
@@ -48,17 +48,17 @@ public class MainTest {
 
     @Test
     public void testNegativeCapacity() {
-        assertThrows(IllegalArgumentException.class, () -> new Table(1, -4,"21:30","23:30"));
+        assertThrows(IllegalArgumentException.class, () -> new Table(1, -4, "21:30", "23:30"));
     }
 
     @Test
     public void testNegativeTableNumber() {
-        assertThrows(IllegalArgumentException.class, () -> new Table(-1, 4,"21:30","23:30"));
+        assertThrows(IllegalArgumentException.class, () -> new Table(-1, 4, "21:30", "23:30"));
     }
 
     @Test
     public void testBothNegativeCapacityAndNegativeTableNumber() {
-        assertThrows(IllegalArgumentException.class, () -> new Table(-1, -4,"21:30","23:30"));
+        assertThrows(IllegalArgumentException.class, () -> new Table(-1, -4, "21:30", "23:30"));
     }
 
 
@@ -89,21 +89,21 @@ public class MainTest {
      *
      * @param time the time string to be validated
      * @throws IllegalArgumentException if the time string does not match the expected format
-     *
-     * We have a regex, where:
-     *<ul>
-     *  <li>^ denotes the start of the string.</li>
-     *  <li> [01]?[0-9] matches the hours part of the time. It allows for either a single digit (0-9) or a leading zero followed by a digit (00-09 or 10-19). </li>
-     *  <li> | is the alternation operator, allowing either the previous pattern or the next pattern to match. </li>
-     *  <li> 2[0-4] matches the hours from 20 to 24. </li>
-     *  <li> : matches the colon separating the hours and minutes. </li>
-     *  <li> [0-5][0-9] matches the minutes part of the time, allowing for any digit (0-9) in the tens place and any digit (0-9) in the units place (00-59). </li>
-     *  <li> $ denotes the end of the string. </li>
-     * </ul>
-     *
-     * In summary, this regular expression pattern ensures that the time string matches the format of a valid time between 1:00 and 24:00, where the hours can be expressed in one or two digits, and the minutes must be two digits.
-     *
-     * For example, this pattern would match strings like "01:00", "12:34", or "24:00" but not "25:00", "ab:12", or "12:3b".
+     *                                  <p>
+     *                                  We have a regex, where:
+     *                                  <ul>
+     *                                   <li>^ denotes the start of the string.</li>
+     *                                   <li> [01]?[0-9] matches the hours part of the time. It allows for either a single digit (0-9) or a leading zero followed by a digit (00-09 or 10-19). </li>
+     *                                   <li> | is the alternation operator, allowing either the previous pattern or the next pattern to match. </li>
+     *                                   <li> 2[0-4] matches the hours from 20 to 24. </li>
+     *                                   <li> : matches the colon separating the hours and minutes. </li>
+     *                                   <li> [0-5][0-9] matches the minutes part of the time, allowing for any digit (0-9) in the tens place and any digit (0-9) in the units place (00-59). </li>
+     *                                   <li> $ denotes the end of the string. </li>
+     *                                  </ul>
+     *                                  <p>
+     *                                  In summary, this regular expression pattern ensures that the time string matches the format of a valid time between 1:00 and 24:00, where the hours can be expressed in one or two digits, and the minutes must be two digits.
+     *                                  <p>
+     *                                  For example, this pattern would match strings like "01:00", "12:34", or "24:00" but not "25:00", "ab:12", or "12:3b".
      */
     private void validateTableBookingTime(String time) {
         if (!time.matches("^([01]?[0-9]|2[0-4]):[0-5][0-9]$")) {
