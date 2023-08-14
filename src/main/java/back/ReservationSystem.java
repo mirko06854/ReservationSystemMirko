@@ -27,6 +27,23 @@ public class ReservationSystem {
         }
     }
 
+    public Reservation createReservation(String name, String time, int tableNumber, int capacity, int totalPeople, int disabilitiesPeople) {
+        // Validate inputs, calculate category, and create reservation
+        String category = calculateCategory(totalPeople, disabilitiesPeople);
+        Reservation reservation = new Reservation(name, time, tableNumber, capacity);
+        reservation.setCategory(category);
+
+        // Check table availability and add reservation
+        if (isTableAvailable(tableNumber)) {
+            reservations.add(reservation);
+            updateTableAvailability(tableNumber, false); // Table is now reserved
+            return reservation;
+        } else {
+            throw new IllegalArgumentException("Table " + tableNumber + " is not available for reservation.");
+        }
+    }
+
+
     public void removeReservation(Reservation reservation) {
         if (reservations.remove(reservation)) {
             updateTableAvailability(reservation.getTableNumber(), true);
@@ -82,7 +99,6 @@ public class ReservationSystem {
     }
 
 
-
     private void updateTableAvailability(int tableNumber, boolean isAvailable) {
         for (Reservation table : tables) {
             if (table.getTableNumber() == tableNumber) {
@@ -95,16 +111,25 @@ public class ReservationSystem {
     private List<Reservation> readReservationDataFromJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            List<Reservation> reservations = objectMapper.readValue(new File("src/main/resources/tables.json"), new TypeReference<List<Reservation>>() {});
+            List<Reservation> reservations = objectMapper.readValue(new File("src/main/resources/tables.json"), new TypeReference<List<Reservation>>() {
+            });
 
             // Set the availability property of each table for each reservation
             for (Reservation reservation : reservations) {
                 int tableNumber = reservation.getTableNumber();
                 boolean isAvailable = isTableAvailable(tableNumber);
                 reservation.setAvailable(isAvailable);
+
+                // Assign category based on table number
+                if (tableNumber >= 1 && tableNumber <= 5) {
+                    reservation.setCategory("Normal");
+                } else if (tableNumber >= 6 && tableNumber <= 10) {
+                    reservation.setCategory("Special Needs");
+                }
             }
 
             return reservations;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -116,4 +141,13 @@ public class ReservationSystem {
             throw new IllegalArgumentException("Invalid table booking time: " + time);
         }
     }
+
+    public String calculateCategory(int normalPeople, int disabilitiesPeople) {
+        if (disabilitiesPeople >= normalPeople) {
+            return "Special Needs";
+        } else {
+            return "Normal";
+        }
+    }
+
 }

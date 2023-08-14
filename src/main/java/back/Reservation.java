@@ -13,6 +13,8 @@ public class Reservation {
     private String leavingTime;
     private Table table;
 
+    private String category;
+
     public Reservation(@JsonProperty("name") String name,  @JsonProperty("arrivalTime") String arrivalTime,
                        @JsonProperty("tableNumber") int tableNumber, @JsonProperty("capacity") int capacity) {
         this.name = name;
@@ -89,5 +91,9 @@ public class Reservation {
         // Calculate the departure time (2 hours later)
         int departureHours = (hours + 2) % 24; // Handle wrapping around midnight
         return String.format("%02d:%02d", departureHours, minutes);
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
