@@ -73,14 +73,49 @@ Test classes:
  </div>
 </div>
 
-### Some issues I faced:
+### Reasonment for splitting the groups in two category:
 
-MainMergedTest had problematic tests:
+---
+I have assumed to be a Restaurant waiter. My restaurant is very small. In my restaurant there are in total 10 tables . The first five tables are designed for people , whereas the last five tables are designed for people with special needs. On the one hand, the first 5 tables have 5 sitting places for each table. On the other hand, the last 5 tables have 3 sitting place for table. We all wish to make all people sit . So I thought this way :
 
-The tests were problematic due to using JavaFX timers in a non-JavaFX environment. These issues arise from timing discrepancies, lack of thread synchronization, and the absence of a JavaFX thread.
-To overcome these problems and ensure reliable testing for JavaFX timers, I used the <b> TestFX library. </b>
-This library creates a JavaFX environment during tests, enabling proper synchronization and accurate timer behavior
-verification. By using TestFX's sleep method, tests can simulate timer duration and improve testing accuracy.
+* CASE 1 : number of people >> number of people with disabilities implies that such group will take place in one of the first 5 tables.
+* CASE 2: number of people with disabilities >> number of people implies that such group will take place in one of the last 5 tables
+* SPECIAL CASE: number of people with disabilities >>  number of people && number of people with disabilities >= 3 implies that such group will take place in one of the first 5 tables
 
-Now the test of MainMerged works in this way. The app is opened and the mouse moves automatically to book some tables. So one example table is booked and tested if after one minute is available or not. So you have to wait one minute for the test to be run. 
 
+### Examples
+
+1. For a group of 4 people and 1 person with disabilities, they will be seated at table 1 (Case 1).
+
+2. For a group of 1 person and 4 people with disabilities, they will be seated at table 3 (Special Case).
+
+3. For a group of 1 person and 2 people with disabilities, they will be seated at table 7 (Case 2).
+
+By following this seating arrangement logic, we aim to provide an inclusive and comfortable dining experience for all customers.
+
+
+### Explaination of warnings that a waiter may encounter while using the app:
+
+---
+
+
+1.  Overlapping Reservation Warning (showOverlapAlert):
+This warning is triggered when a new reservation overlaps with an existing one. Overlapping reservations can lead to seating conflicts and customer dissatisfaction. The app considers by default leaving time of each booking as: arrivalTime + 2 hours. <br>
+
+2.  Invalid Input Warning (showInvalidNumberAlert, showInvalidInputAlert):
+These warnings are shown when the waiter enters invalid input values, such as non-numeric characters or negative values. Handling invalid inputs prevents unexpected behavior in the application and guides the waiter to enter correct and meaningful data. <br>
+
+3.  Table Already Reserved Warning (showReservedAlert):
+This warning informs the waiter that the selected table is already reserved during the chosen time slot. It helps prevent double bookings and ensures that each table is only reserved once at a given time. <br>
+
+4.  Reservation Category and Capacity Mismatch Warning (validateTableCategory):
+This warning addresses the scenario where the calculated category or capacity of the table doesn't match the selected values. Ensuring that the table's attributes align with the reservation group's characteristics avoids assigning customers to inappropriate tables. (ensuring that max 5 or 3 people can sit to the respective tables, and in case of minor capacity that the default one, the capacity must be = total people). <br>
+
+5.  Unsuccessful Table Selection Warning (validateTableNumber):
+This warning is displayed if the waiter selects a table number that is not available for reservations. It guides the waiter to choose a table with a valid number within the specified range. <br>
+
+6.  Serialization Error Handling (serializeJsonFile, cleanJson):
+These methods handle the serialization of reservations into a JSON file. Serialization errors could lead to data loss or corruption. By handling these errors and saving data consistently, you ensure that reservations are properly stored and retrieved. <br>
+
+7. Table Unlocking (unlockTransition):
+This mechanism ensures that tables are automatically unlocked after a reservation's departure time. By using a PauseTransition, the system make sure that tables become available for new reservations after the specified time has passed. <br>
