@@ -11,7 +11,16 @@ import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This class contains unit tests for the methods in the {@link MainMerged} class.
+ * It extends the {@link ApplicationTest} class to leverage JavaFX testing utilities.
+ */
 public class MainMergedTest extends ApplicationTest {
+
+    /**
+     * Test the {@link MainMerged#calculateArrivalTime(String)} method.
+     * It verifies that the method correctly calculates the arrival time based on the given input time.
+     */
     @Test
     public void calculateArrivalTimeTest() {
         // Given
@@ -24,6 +33,11 @@ public class MainMergedTest extends ApplicationTest {
         // Then
         assertEquals(LocalTime.of(9, 0), arrivalTime);
     }
+
+    /**
+     * Test the {@link MainMerged#calculateDuration(LocalTime, LocalTime)} method.
+     * It verifies that the method calculates the correct duration between two given times.
+     */
 
     @Test
     public void calculateDurationTest() {
@@ -39,6 +53,11 @@ public class MainMergedTest extends ApplicationTest {
         assertEquals(Duration.hours(2), duration);
     }
 
+    /**
+     * Test the {@link MainMerged#getCategoryForTable(int)} method
+     * when the table number corresponds to a "Normal" category.
+     * It verifies that the correct category is returned for a valid table number.
+     */
     @Test
     public void getCategoryForTableNormal() {
         // Given
@@ -51,6 +70,12 @@ public class MainMergedTest extends ApplicationTest {
         // Then
         assertEquals("Normal", category);
     }
+
+    /**
+     * Test the {@link MainMerged#getCategoryForTable(int)} method
+     * when the table number corresponds to a "Special Needs" category.
+     * It verifies that the correct category is returned for a valid table number.
+     */
 
     @Test
     public void getCategoryForTableSpecialNeeds() {
@@ -65,6 +90,11 @@ public class MainMergedTest extends ApplicationTest {
         assertEquals("Special Needs", category);
     }
 
+    /**
+     * Test the {@link MainMerged#getCategoryForTable(int)} method
+     * when the table number is not recognized and falls into the "Unknown" category.
+     * It verifies that the "Unknown" category is returned for an invalid table number.
+     */
     @Test
     public void getCategoryForTableUnknown() {
         // Given
@@ -77,7 +107,11 @@ public class MainMergedTest extends ApplicationTest {
         // Then
         assertEquals("Unknown", category);
     }
-
+    /**
+     * Test the {@link MainMerged#isValidTimeFormat(String)} method
+     * when a valid time format is provided.
+     * It verifies that the method correctly validates a valid time format.
+     */
     @Test
     public void isValidTimeFormatValid() {
         // Given
@@ -91,6 +125,11 @@ public class MainMergedTest extends ApplicationTest {
         assertTrue(isValid);
     }
 
+    /**
+     * Test the {@link MainMerged#isValidTimeFormat(String)} method
+     * when an invalid time format is provided.
+     * It verifies that the method correctly identifies an invalid time format.
+     */
     @Test
     public void isValidTimeFormatInvalid() {
         // Given
@@ -104,6 +143,11 @@ public class MainMergedTest extends ApplicationTest {
         assertFalse(isValid);
     }
 
+    /**
+     * Test the {@link MainMerged#isReservationOverlapping(int, LocalTime, LocalTime)} method
+     * when there is no overlap between reservations.
+     * It verifies that the method correctly identifies no overlap.
+     */
     @Test
     public void isReservationOverlappingNoOverlap() {
         // Given
@@ -123,6 +167,11 @@ public class MainMergedTest extends ApplicationTest {
         }
     }
 
+    /**
+     * Test the {@link MainMerged#isReservationOverlapping(int, LocalTime, LocalTime)} method
+     * when there is an overlap between reservations.
+     * It verifies that the method correctly identifies the overlap.
+     */
     @Test
     public void isReservationOverlappingOverlap() {
         // Given

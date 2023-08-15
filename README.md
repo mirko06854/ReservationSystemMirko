@@ -1,12 +1,20 @@
 # App for managing Reservations designed for the staff manager.
 
+---
+## Description: 
+
+The Reservation System application is designed to facilitate the reservation and management of tables in a dining establishment. It aims to simplify the process of making reservations, ensure efficient utilization of available tables, and manage reservation-related tasks.
+
+---
+## Structure:
+
 This application is composed by three packages:
 
 *   back for the backend
   * front for the front-end
   * merged -> merges front and back end
 
-We are using Java 17.0.1. hence the maven compiler sources and target are 17 and 17:
+We are using Java 17.0.1. hence the maven compiler sources and target, in the .pom file, are 17 and 17:
 
 <b>
 <span style="font-family: Arial; color: blue;">&lt;maven.compiler.source&gt; 17 &lt;/maven.compiler.source&gt;</span>
@@ -18,6 +26,7 @@ We are using Java 17.0.1. hence the maven compiler sources and target are 17 and
 <span style="font-family: Arial; color: blue;">&lt;maven.compiler.target&gt; 17 &lt;/maven.compiler.target&gt;</span>
 </b>
 
+---
 ## <span style="color: red;">How to run the code</span>:
 
 Steps:
@@ -27,8 +36,9 @@ Steps:
 *  "mvn test" to run the tests
 *  for javadoc read below
 *  "mvn javafx:run" for running the application
+* to close the app, apart pressing the button for closing it, also press "ctrl + C" since the process continue running also after having closed the app.
 
-
+--- 
 
 
 ## Commands used for javadoc
@@ -56,26 +66,27 @@ Note : after executing such commands the javadoc documentation is findable onlin
 
 Normal classes:
 
-[Backend](../StaffManagerProjectMirkoIsidoraNew/target/site/apidocs/back)
+[Backend](../StaffManagerProjectMirko/target/site/apidocs/back)
 
-[Frontend](../StaffManagerProjectMirkoIsidoraNew/target/site/apidocs/front)
+[Frontend](../StaffManagerProjectMirko/target/site/apidocs/front)
 
-[Merged](../StaffManagerProjectMirkoIsidoraNew/target/site/apidocs/merged)
+[Merged](../StaffManagerProjectMirko/target/site/apidocs/merged)
 
 Test classes:
 
-[Backend_test](../StaffManagerProjectMirkoIsidoraNew/target/site/testapidocs/back_tests)
+[Backend_test](../StaffManagerProjectMirko/target/site/testapidocs/back_tests)
 
-[Frontend_test](../StaffManagerProjectMirkoIsidoraNew/target/site/testapidocs/front_tests)
+[Frontend_test](../StaffManagerProjectMirko/target/site/testapidocs/front_tests)
 
-[Merged_test](../StaffManagerProjectMirkoIsidoraNew/target/site/testapidocs/merged_tests)
+[Merged_test](../StaffManagerProjectMirko/target/site/testapidocs/merged_tests)
 
  </div>
 </div>
 
+---
+
 ### Reasonment for splitting the groups in two category:
 
----
 I have assumed to be a Restaurant waiter. My restaurant is very small. In my restaurant there are in total 10 tables . The first five tables are designed for people , whereas the last five tables are designed for people with special needs. On the one hand, the first 5 tables have 5 sitting places for each table. On the other hand, the last 5 tables have 3 sitting place for table. We all wish to make all people sit . So I thought this way :
 
 * CASE 1 : number of people >> number of people with disabilities implies that such group will take place in one of the first 5 tables.
@@ -93,10 +104,12 @@ I have assumed to be a Restaurant waiter. My restaurant is very small. In my res
 
 By following this seating arrangement logic, we aim to provide an inclusive and comfortable dining experience for all customers.
 
+---
+
 
 ### Explaination of warnings that a waiter may encounter while using the app:
 
----
+
 
 
 1.  Overlapping Reservation Warning (showOverlapAlert):
@@ -120,6 +133,7 @@ These methods handle the serialization of reservations into a JSON file. Seriali
 7. Table Unlocking (unlockTransition):
 This mechanism ensures that tables are automatically unlocked after a reservation's departure time. By using a PauseTransition, the system make sure that tables become available for new reservations after the specified time has passed. <br>
 
+---
 
 ## Challenges: 
 
