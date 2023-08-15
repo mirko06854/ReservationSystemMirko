@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class MainMerged extends Application implements MainMergedHelper {
-    private ObservableList<Reservation> reservations = FXCollections.observableArrayList();
+    public ObservableList<Reservation> reservations = FXCollections.observableArrayList();
     private ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -254,23 +254,29 @@ public class MainMerged extends Application implements MainMergedHelper {
         deleteButton.setId("deleteButton");
         reservationTable.setId("reservationTable");
 
+        /* Set up a scheduled task using centralTimer to periodically run processUnlockEvents()
+         This task will execute every second (1000 milliseconds) to check for unlock events
+         */
         centralTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                processUnlockEvents();
+                processUnlockEvents(); // Check and handle unlock events
             }
         }, 0, 1000); // Check every second for unlock events
     }
 
     private void processUnlockEvents() {
-        LocalTime currentTime = LocalTime.now();
+        LocalTime currentTime = LocalTime.now(); //  used to retrieve the current local time based on the system clock.
 
+        // Iterate through all reservations to check for unlock events
         for (Reservation reservation : reservations) {
+            // Check if the reservation's unlock time is before the current time and if it's still locked
             if (reservation.getUnlockTime().isBefore(currentTime) && reservation.isLocked()) {
                 Table table = reservation.getTable();
+                // Set the table as available again and update its availability in JSON data
                 updateTableAvailability(table.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(table.getTableNumber())); // Unlock the table
                 reservation.setLocked(false); // Mark reservation as unlocked
-                serializeJsonFile();
+                serializeJsonFile(); // Save changes to JSON file
             }
         }
     }
@@ -419,7 +425,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         return LocalTime.of(hours, minutes);
     }
 
-    private boolean isValidTimeFormat(String time) {
+    public boolean isValidTimeFormat(String time) {
         return time.matches("^\\d{2}:\\d{2}$");
     }
 
