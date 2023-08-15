@@ -14,7 +14,6 @@ import java.time.LocalTime;
  * This interface defines helper methods for the MainMerged class, which handles reservation and table management.
  */
 public interface MainMergedHelper {
-    boolean isTableReserved(int tableNumber, String arrivalTime, String leavingTime);
 
     void loadReservedTables();
 

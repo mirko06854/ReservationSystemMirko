@@ -119,3 +119,16 @@ These methods handle the serialization of reservations into a JSON file. Seriali
 
 7. Table Unlocking (unlockTransition):
 This mechanism ensures that tables are automatically unlocked after a reservation's departure time. By using a PauseTransition, the system make sure that tables become available for new reservations after the specified time has passed. <br>
+
+
+## Challenges: 
+
+In the implementation of the reservation system, I encountered challenges related to synchronization and delayed unlocking of reserved tables. To address these issues, I introduced a centralized time management system that ensures timely unlocking of tables based on reservation times. 
+
+#### Problem: Synchronization and Delayed Unlocking
+
+The initial approach relied on individual timers for each reservation, leading to synchronization problems and delayed unlocking of tables after reservations ended.
+
+#### Solution: Centralized Time Management System
+
+To overcome these challenges, I implemented a centralized time management system that consistently checks for unlock events at regular intervals and updates table availability based on reservation times.

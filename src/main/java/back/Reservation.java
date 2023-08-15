@@ -7,6 +7,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 
+import java.time.LocalTime;
+
 public class Reservation {
     private String name;
     private String arrivalTime;
@@ -15,6 +17,9 @@ public class Reservation {
 
     private String category;
 
+    private LocalTime unlockTime; // New field for unlock time
+    private boolean locked; // New field for locked status
+
     public Reservation(@JsonProperty("name") String name, @JsonProperty("arrivalTime") String arrivalTime,
                        @JsonProperty("tableNumber") int tableNumber, @JsonProperty("capacity") int capacity) {
         this.name = name;
@@ -22,6 +27,10 @@ public class Reservation {
         // Calculate leaving time as 2 hours after arrival time
         this.leavingTime = calculateLeavingTime(arrivalTime);
         this.table = new Table(tableNumber, capacity, arrivalTime, leavingTime);
+
+        // Calculate unlock time as 1 minute after leaving time (adjust as needed)
+        this.unlockTime = LocalTime.parse(leavingTime).plusMinutes(1);
+        this.locked = true; // Mark reservation as locked initially
     }
 
     public String getName() {
@@ -97,5 +106,23 @@ public class Reservation {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+    @JsonIgnore
+    public LocalTime getUnlockTime() {
+        return unlockTime;
+    }
+    @JsonIgnore
+    public boolean isLocked() {
+        return locked;
+    }
+
+    @JsonIgnore
+    public void setUnlockTime(LocalTime unlockTime) {
+        this.unlockTime = unlockTime;
+    }
+
+    @JsonIgnore
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 }

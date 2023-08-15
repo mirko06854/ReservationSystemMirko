@@ -56,6 +56,8 @@ public class MainMerged extends Application implements MainMergedHelper {
     Button cleanButton = new Button("Clean JSON");
     Button deleteButton = new Button("Delete Reservation");
 
+    private Timer centralTimer = new Timer();
+
 
     public static void main(String[] args) {
         launch(args);
@@ -70,6 +72,8 @@ public class MainMerged extends Application implements MainMergedHelper {
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+
 
         reserveButton.setOnAction(e -> {
             try {
@@ -114,12 +118,10 @@ public class MainMerged extends Application implements MainMergedHelper {
                     category = "Normal"; // Set category to "Normal" in this special case
                 }
 
-
-                // Check table number validity
-                validateTableNumber(tableNumber);
-
-                // Validate table booking time
-                ReservationSystem.validateTableBookingTime(time);
+                if (!isValidTimeFormat(time)) {
+                    showInvalidTimeFormatAlert();
+                    return ;
+                }
 
                 // Get the most recent departure time for the selected table
                 LocalTime lastDepartureTime = getLastDepartureTimeForTable(tableNumber);
@@ -127,8 +129,6 @@ public class MainMerged extends Application implements MainMergedHelper {
                 // Calculate new arrival and departure times
                 LocalTime newArrivalTime = calculateArrivalTime(time);
                 LocalTime newDepartureTime = newArrivalTime.plusHours(2);
-
-                // Check if new reservation overlaps with existing reservations
 
                 /* Note:  compare the new reservation's arrival time with the unlock time of the most recent reservation
                 for the same table. If the new reservation's arrival time is after this unlock time, then there
@@ -140,27 +140,20 @@ public class MainMerged extends Application implements MainMergedHelper {
 
                 // Check if new reservation overlaps with existing reservations
                 if (isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime)) {
-                    if (!newArrivalTime.isAfter(lastDepartureTime.plusHours(2))) {
-                        // Overlaps with the unlock time of the last reservation, but we'll still allow it
-                        // Instead of showing the alert, you can just continue without adding the reservation
-                        return; // Exit the method without adding the reservation
-                    } else {
                         showOverlapAlert();
-                        return; // Exit the method without adding the reservation
-                    }
+                        return;
                 }
+                // Check table number validity
+                validateTableNumber(tableNumber);
+
+                // Validate table booking time
+                ReservationSystem.validateTableBookingTime(time);
 
                 // validates the category and check if it matches the table
                 validateTableCategory(tableNumber, capacity, category);
 
                 // Validate category and capacity
                 if (!validateTableCategory(tableNumber, capacity, category)) {
-                    return; // Exit the method without adding the reservation
-                }
-
-                // Check if the table is already reserved during the booking time and departure time
-                if (isTableReserved(tableNumber, time, newDepartureTime.format(DateTimeFormatter.ofPattern("HH:mm")))) {
-                    showReservedAlert(tableNumber, time);
                     return; // Exit the method without adding the reservation
                 }
 
@@ -260,10 +253,26 @@ public class MainMerged extends Application implements MainMergedHelper {
         cleanButton.setId("cleanButton");
         deleteButton.setId("deleteButton");
         reservationTable.setId("reservationTable");
+
+        centralTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                processUnlockEvents();
+            }
+        }, 0, 1000); // Check every second for unlock events
     }
 
-    public boolean isTableReserved(int tableNumber, String arrivalTime, String leavingTime) {
-        return reservationSystem.isTableReserved(tableNumber, arrivalTime, leavingTime);
+    private void processUnlockEvents() {
+        LocalTime currentTime = LocalTime.now();
+
+        for (Reservation reservation : reservations) {
+            if (reservation.getUnlockTime().isBefore(currentTime) && reservation.isLocked()) {
+                Table table = reservation.getTable();
+                updateTableAvailability(table.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(table.getTableNumber())); // Unlock the table
+                reservation.setLocked(false); // Mark reservation as unlocked
+                serializeJsonFile();
+            }
+        }
     }
 
     public void loadReservedTables() {
@@ -402,10 +411,16 @@ public class MainMerged extends Application implements MainMergedHelper {
     }
 
     public LocalTime calculateArrivalTime(String time) {
+
         String[] timeParts = time.split(":");
         int hours = Integer.parseInt(timeParts[0]);
         int minutes = Integer.parseInt(timeParts[1]);
+
         return LocalTime.of(hours, minutes);
+    }
+
+    private boolean isValidTimeFormat(String time) {
+        return time.matches("^\\d{2}:\\d{2}$");
     }
 
     public boolean isReservationOverlapping(int tableNumber, LocalTime newArrivalTime, LocalTime newDepartureTime) {
@@ -427,6 +442,14 @@ public class MainMerged extends Application implements MainMergedHelper {
         alert.setTitle("Reservation Overlap");
         alert.setHeaderText("The new reservation overlaps with an existing reservation.");
         alert.setContentText("Please select a different time or table.");
+        alert.showAndWait();
+    }
+
+    private void showInvalidTimeFormatAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Invalid Time Format");
+        alert.setHeaderText("Invalid time format");
+        alert.setContentText("Please enter the time in the format HH:mm (e.g., 09:00).");
         alert.showAndWait();
     }
 
