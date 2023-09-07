@@ -11,6 +11,7 @@ public class Plate {
 
     public Plate(String name, int quantity) {
         this.name = name;
+        this.quantity = quantity;
     }
 
     public static String getName() {

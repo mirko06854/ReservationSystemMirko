@@ -265,29 +265,30 @@ public class MainMerged extends Application implements MainMergedHelper {
         viewFoodColumn.setCellFactory(param -> new TableCell<>() {
             private final Button viewFoodButton = new Button("View Food");
 
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
+        @Override
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
 
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(viewFoodButton);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                setGraphic(viewFoodButton);
 
-                    // Get the selected reservation for this row
-                    ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
+                // Get the selected reservation for this row
+                ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
 
-                    // Handle button click event
-                    viewFoodButton.setOnAction(event -> {
-                        Reservation reservation = findReservation(reservationDisplay);
-                        if (reservation != null) {
-                            List<Plate> orderedPlates = reservation.getPlates();
-                            showOrderedFoodDialog(orderedPlates);
-                        }
-                    });
-                }
+                // Handle button click event
+                viewFoodButton.setOnAction(event -> {
+                    Reservation reservation = findReservation(reservationDisplay);
+                    if (reservation != null) {
+                        Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
+                        showOrderedFoodDialog(orderedPlatesMap);
+                    }
+                });
             }
-        });
+        }
+    });
+
 
 
         reservationTable = new TableView<>();
@@ -335,34 +336,34 @@ public class MainMerged extends Application implements MainMergedHelper {
         }, 0, 1000); // Check every second for unlock events
     }
 
-    private void showOrderedFoodDialog(List<Plate> orderedPlates) {
-        // Create a dialog
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Ordered Food Items");
-        dialog.setHeaderText("Food items ordered for this reservation:");
+    public void showOrderedFoodDialog(Map<String, Integer> orderedPlatesMap) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Ordered Food");
+        alert.setHeaderText("Ordered Plates and Quantities");
 
-        // Create a dialog pane
-        DialogPane dialogPane = new DialogPane();
-        dialog.setDialogPane(dialogPane);
+        // Create a TextArea to display the ordered plates and quantities
+        TextArea textArea = new TextArea();
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
 
-        // Create a ListView to display the ordered plates with quantity
-        ListView<String> orderedPlatesListView = new ListView<>();
-        orderedPlatesListView.setPrefHeight(200); // Customize the height as needed
+        // Build the content of the dialog
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxWidth(Double.MAX_VALUE);
+        gridPane.add(textArea, 0, 0);
 
-        // Populate the ListView with ordered plates and quantities
-        for (Plate plate : orderedPlates) {
-            String plateInfo = plate.getName() + " (Quantity: " + plate.getQuantity() + ")";
-            orderedPlatesListView.getItems().add(plateInfo);
+        // Iterate over the ordered plates map and append them to the TextArea
+        StringBuilder orderedPlatesText = new StringBuilder();
+        for (Map.Entry<String, Integer> entry : orderedPlatesMap.entrySet()) {
+            String plateName = entry.getKey();
+            int quantity = entry.getValue();
+            orderedPlatesText.append(plateName).append(": ").append(quantity).append("\n");
         }
+        textArea.setText(orderedPlatesText.toString());
 
-        dialogPane.setContent(orderedPlatesListView);
-
-        // Add a Close button to the dialog
-        ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().addAll(closeButton);
+        alert.getDialogPane().setContent(gridPane);
 
         // Show the dialog
-        dialog.showAndWait();
+        alert.showAndWait();
     }
 
 
@@ -405,20 +406,21 @@ public class MainMerged extends Application implements MainMergedHelper {
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
 
+        // Declare a Map to store selected plates and their quantities
+        Map<String, Integer> selectedPlatesMap = new HashMap<>();
+
         // When OK is clicked, collect the selected plates and quantities
         dialog.setResultConverter(buttonType -> {
             if (buttonType == buttonTypeOk) {
-                List<Plate> selectedPlates = new ArrayList<>();
                 for (int i = 0; i < checkboxes.size(); i++) {
                     if (checkboxes.get(i).isSelected()) {
                         Plate plate = getAllPlates().get(i);
                         int quantity = quantitySpinners.get(i).getValue();
-                        plate.setQuantity(quantity); // Set the quantity for the selected plate
-                        selectedPlates.add(plate);
+                        selectedPlatesMap.put(plate.getName(), quantity);
                     }
                 }
-                // Update the reservation with the selected plates
-                reservation.setPlates(selectedPlates);
+                // Update the reservation with the selected plates map
+                reservation.setPlatesMap(selectedPlatesMap);
             }
             return null; // Return null for other cases (e.g., Cancel)
         });
