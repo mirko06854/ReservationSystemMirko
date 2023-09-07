@@ -7,6 +7,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import java.time.LocalTime;
 
 public class Reservation {
@@ -20,6 +23,9 @@ public class Reservation {
     private LocalTime unlockTime; // New field for unlock time
     private boolean locked; // New field for locked status
 
+    private List<Plate> plates;
+
+
     public Reservation(@JsonProperty("name") String name, @JsonProperty("arrivalTime") String arrivalTime,
                        @JsonProperty("tableNumber") int tableNumber, @JsonProperty("capacity") int capacity) {
         this.name = name;
@@ -31,6 +37,7 @@ public class Reservation {
         // Calculate unlock time as 1 minute after leaving time (adjust as needed)
         this.unlockTime = LocalTime.parse(leavingTime).plusMinutes(1);
         this.locked = true; // Mark reservation as locked initially
+        this.plates = new ArrayList<>(); // Initialize the list of plates
     }
 
     public String getName() {
@@ -124,5 +131,27 @@ public class Reservation {
     @JsonIgnore
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    @JsonIgnore
+    // Get the list of plates associated with this reservation
+    public List<Plate> getPlates() {
+        return plates;
+    }
+
+    @JsonIgnore
+    // Add a plate to the list of plates for this reservation
+    public void addPlate(Plate plate) {
+        plates.add(plate);
+    }
+
+    @JsonIgnore
+    // Remove a plate from the list of plates for this reservation
+    public void removePlate(Plate plate) {
+        plates.remove(plate);
+    }
+
+    public void setPlates(List<Plate> plates) {
+        this.plates = plates;
     }
 }

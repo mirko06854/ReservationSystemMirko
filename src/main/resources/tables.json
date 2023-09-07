@@ -1,1 +1,22 @@
-[ ]
+[ {
+  "name" : "rtrtyrt",
+  "arrivalTime" : "21:00",
+  "tableNumber" : 4,
+  "capacity" : 5,
+  "leavingTime" : "23:00",
+  "available" : true
+}, {
+  "name" : "thyjfhg",
+  "arrivalTime" : "23:00",
+  "tableNumber" : 4,
+  "capacity" : 5,
+  "leavingTime" : "01:00",
+  "available" : true
+}, {
+  "name" : "thyjfhg",
+  "arrivalTime" : "23:00",
+  "tableNumber" : 2,
+  "capacity" : 5,
+  "leavingTime" : "01:00",
+  "available" : true
+} ]

@@ -1,8 +1,6 @@
 package merged;
 
-import back.Reservation;
-import back.ReservationSystem;
-import back.Table;
+import back.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import javafx.animation.PauseTransition;
@@ -20,8 +18,9 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static back.PlateManager.getAllPlates;
 
 public class MainMerged extends Application implements MainMergedHelper {
     public ObservableList<Reservation> reservations = FXCollections.observableArrayList();
@@ -55,6 +54,8 @@ public class MainMerged extends Application implements MainMergedHelper {
     Button reserveButton = new Button("Reserve");
     Button cleanButton = new Button("Clean JSON");
     Button deleteButton = new Button("Delete Reservation");
+
+    Button selectDishesButton = new Button("Select Dishes for Clients");
 
     private Timer centralTimer = new Timer();
 
@@ -140,8 +141,8 @@ public class MainMerged extends Application implements MainMergedHelper {
 
                 // Check if new reservation overlaps with existing reservations
                 if (isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime)) {
-                        showOverlapAlert();
-                        return;
+                    showOverlapAlert();
+                    return;
                 }
                 // Check table number validity
                 validateTableNumber(tableNumber);
@@ -216,6 +217,19 @@ public class MainMerged extends Application implements MainMergedHelper {
             }
         });
 
+        selectDishesButton.setOnAction(event -> {
+            // Get the selected reservation
+            ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
+            if (selectedReservation != null) {
+                Reservation reservation = findReservation(selectedReservation);
+                if (reservation != null) {
+                    // Open the popup to select dishes for the selected reservation
+                    openDishesPopup(reservation);
+                }
+            }
+        });
+
+
         loadReservedTables();
 
         TableColumn<ReservationDisplay, String> nameColumn = new TableColumn<>("Name");
@@ -230,14 +244,69 @@ public class MainMerged extends Application implements MainMergedHelper {
         TableColumn<ReservationDisplay, Integer> capacityColumn = new TableColumn<>("Capacity");
         capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
 
+        // Add a new button column to the reservation table
+        TableColumn<ReservationDisplay, Void> viewFoodColumn = new TableColumn<>("View Food");
+        viewFoodColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button viewFoodButton = new Button("View Food");
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(viewFoodButton);
+                }
+            }
+        });
+
+// Handle the button click event to display food items
+        viewFoodColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button viewFoodButton = new Button("View Food");
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(viewFoodButton);
+
+                    // Get the selected reservation for this row
+                    ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
+
+                    // Handle button click event
+                    viewFoodButton.setOnAction(event -> {
+                        Reservation reservation = findReservation(reservationDisplay);
+                        if (reservation != null) {
+                            List<Plate> orderedPlates = reservation.getPlates();
+                            showOrderedFoodDialog(orderedPlates);
+                        }
+                    });
+                }
+            }
+        });
+
+
         reservationTable = new TableView<>();
         reservationTable.setId("reservationTable");
-        reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, capacityColumn);
+        reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, capacityColumn,viewFoodColumn);
         reservationTable.setItems(reservationDisplays);
+
+        // Add a listener to enable/disable the "Select Dishes for Clients" button based on row selection
+        reservationTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                selectDishesButton.setDisable(false); // Enable the button when a row is selected
+            } else {
+                selectDishesButton.setDisable(true); // Disable the button when no row is selected
+            }
+        });
 
         layout = new VBox(10);
         layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, capacityLabel, capacityField, peopleNumberLabel, peopleNumberField,
-                disabilitiesPeopleNumberLabel, disabilitiesPeopleNumberField, reserveButton, deleteButton, cleanButton, reservationTable);
+                disabilitiesPeopleNumberLabel, disabilitiesPeopleNumberField, reserveButton, deleteButton, cleanButton, reservationTable, selectDishesButton);
         layout.setPadding(new Insets(10));
         scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
@@ -253,6 +322,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         cleanButton.setId("cleanButton");
         deleteButton.setId("deleteButton");
         reservationTable.setId("reservationTable");
+        selectDishesButton.setId("selectDish");
 
         /* Set up a scheduled task using centralTimer to periodically run processUnlockEvents()
          This task will execute every second (1000 milliseconds) to check for unlock events
@@ -264,6 +334,99 @@ public class MainMerged extends Application implements MainMergedHelper {
             }
         }, 0, 1000); // Check every second for unlock events
     }
+
+    private void showOrderedFoodDialog(List<Plate> orderedPlates) {
+        // Create a dialog
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Ordered Food Items");
+        dialog.setHeaderText("Food items ordered for this reservation:");
+
+        // Create a dialog pane
+        DialogPane dialogPane = new DialogPane();
+        dialog.setDialogPane(dialogPane);
+
+        // Create a ListView to display the ordered plates with quantity
+        ListView<String> orderedPlatesListView = new ListView<>();
+        orderedPlatesListView.setPrefHeight(200); // Customize the height as needed
+
+        // Populate the ListView with ordered plates and quantities
+        for (Plate plate : orderedPlates) {
+            String plateInfo = plate.getName() + " (Quantity: " + plate.getQuantity() + ")";
+            orderedPlatesListView.getItems().add(plateInfo);
+        }
+
+        dialogPane.setContent(orderedPlatesListView);
+
+        // Add a Close button to the dialog
+        ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(closeButton);
+
+        // Show the dialog
+        dialog.showAndWait();
+    }
+
+
+
+
+    private void openDishesPopup(Reservation reservation) {
+        // Create a dialog
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Select Dishes");
+        dialog.setHeaderText("Select dishes and quantity for the reservation:");
+
+        // Create a dialog pane
+        DialogPane dialogPane = new DialogPane();
+        dialog.setDialogPane(dialogPane);
+
+        // Create a GridPane to display plates and quantity selectors
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        // Create checkboxes and quantity selectors for each plate
+        List<CheckBox> checkboxes = new ArrayList<>();
+        List<Spinner<Integer>> quantitySpinners = new ArrayList<>();
+        for (int i = 0; i < getAllPlates().size(); i++) {
+            Plate plate = getAllPlates().get(i);
+            CheckBox checkbox = new CheckBox(plate.getName());
+            Spinner<Integer> quantitySpinner = new Spinner<>(1, 10, 1); // Customize the spinner range as needed
+            checkboxes.add(checkbox);
+            quantitySpinners.add(quantitySpinner);
+
+            // Add checkboxes and quantity selectors to the grid
+            grid.add(checkbox, 0, i);
+            grid.add(quantitySpinner, 1, i);
+        }
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Add OK and Cancel buttons to the dialog
+        ButtonType buttonTypeOk = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
+
+        // When OK is clicked, collect the selected plates and quantities
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == buttonTypeOk) {
+                List<Plate> selectedPlates = new ArrayList<>();
+                for (int i = 0; i < checkboxes.size(); i++) {
+                    if (checkboxes.get(i).isSelected()) {
+                        Plate plate = getAllPlates().get(i);
+                        int quantity = quantitySpinners.get(i).getValue();
+                        plate.setQuantity(quantity); // Set the quantity for the selected plate
+                        selectedPlates.add(plate);
+                    }
+                }
+                // Update the reservation with the selected plates
+                reservation.setPlates(selectedPlates);
+            }
+            return null; // Return null for other cases (e.g., Cancel)
+        });
+
+        // Show the dialog
+        dialog.showAndWait();
+    }
+
 
     private void processUnlockEvents() {
         LocalTime currentTime = LocalTime.now(); //  used to retrieve the current local time based on the system clock.
@@ -489,6 +652,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         alert.showAndWait();
     }
 
+    private Reservation currentReservation; // Declare a variable to hold the current reservation
     public void addReservation(String name, String time, int tableNumber, int capacity) {
         Reservation reservation = new Reservation(name, time, tableNumber, capacity);
         reservations.add(reservation);
@@ -507,6 +671,7 @@ public class MainMerged extends Application implements MainMergedHelper {
     and their serialization into JSON, otherwise I could have used also a Timeline and keyframe! (async synchronization)
     */
         PauseTransition unlockTransition = new PauseTransition(timeUntilUnlock);
+        currentReservation = reservation;
         unlockTransition.setOnFinished(evt -> {
             updateTableAvailability(reservation.getTableNumber(), String.valueOf(arrivalTime), String.valueOf(unlockTime), getCategoryForTable(tableNumber)); // Unlock the table
             serializeJsonFile();
