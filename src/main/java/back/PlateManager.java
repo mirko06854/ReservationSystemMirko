@@ -4,23 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlateManager {
-    // Create a list to store available plates
     private static List<Plate> allPlates = new ArrayList<>();
 
-    // Initialize the list with some sample plates (you can add more as needed)
     static {
-        allPlates.add(new Plate("Spaghetti Carbonara"));
-        allPlates.add(new Plate("Margherita Pizza"));
-        allPlates.add(new Plate("Grilled Salmon"));
-        allPlates.add(new Plate("Caesar Salad"));
-        allPlates.add(new Plate("Beef Tacos"));
-        allPlates.add(new Plate("Chocolate Fondue"));
-
+        allPlates.add(new Plate("Spaghetti Carbonara", 0));
+        allPlates.add(new Plate("Margherita Pizza", 1));
+        allPlates.add(new Plate("Grilled Salmon", 2));
+        allPlates.add(new Plate("Caesar Salad", 3));
+        allPlates.add(new Plate("Beef Tacos", 4));
+        allPlates.add(new Plate("Chocolate Fondue", 5));
     }
 
-    // Get the list of all available plates
     public static List<Plate> getAllPlates() {
         return allPlates;
     }
-}
 
+    // Add a method to get a specific plate by index
+    public static Plate getPlateByIndex(int index) {
+        if (index >= 0 && index < allPlates.size()) {
+            return allPlates.get(index);
+        }
+        return null;
+    }
+}

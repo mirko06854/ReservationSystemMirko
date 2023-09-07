@@ -1,32 +1,13 @@
 package back;
 
 public class Plate {
+    private String name;
 
-    private static String name;
-    private static int quantity;
-
-    public Plate(String name) {
+    public Plate(String name, int i) {
         this.name = name;
     }
 
-    public Plate(String name, int quantity) {
-        this.name = name;
-        this.quantity = quantity;
-    }
-
-    public static String getName() {
+    public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public static int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 }

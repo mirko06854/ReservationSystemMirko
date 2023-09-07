@@ -245,6 +245,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
 
         // Add a new button column to the reservation table
+        // Add a new button column to the reservation table
         TableColumn<ReservationDisplay, Void> viewFoodColumn = new TableColumn<>("View Food");
         viewFoodColumn.setCellFactory(param -> new TableCell<>() {
             private final Button viewFoodButton = new Button("View Food");
@@ -257,6 +258,17 @@ public class MainMerged extends Application implements MainMergedHelper {
                     setGraphic(null);
                 } else {
                     setGraphic(viewFoodButton);
+                    // Get the selected reservation for this row
+                    ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
+
+                    // Handle button click event
+                    viewFoodButton.setOnAction(event -> {
+                        Reservation reservation = findReservation(reservationDisplay);
+                        if (reservation != null) {
+                            Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
+                            showOrderedFoodDialog(orderedPlatesMap);
+                        }
+                    });
                 }
             }
         });
@@ -265,30 +277,30 @@ public class MainMerged extends Application implements MainMergedHelper {
         viewFoodColumn.setCellFactory(param -> new TableCell<>() {
             private final Button viewFoodButton = new Button("View Food");
 
-        @Override
-        protected void updateItem(Void item, boolean empty) {
-            super.updateItem(item, empty);
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
 
-            if (empty) {
-                setGraphic(null);
-            } else {
-                setGraphic(viewFoodButton);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(viewFoodButton);
 
-                // Get the selected reservation for this row
-                ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
+                    // Get the selected reservation for this row
+                    ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
 
-                // Handle button click event
-                viewFoodButton.setOnAction(event -> {
-                    Reservation reservation = findReservation(reservationDisplay);
-                    if (reservation != null) {
-                        Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
-                        showOrderedFoodDialog(orderedPlatesMap);
-                    }
-                });
+                    // Handle button click event
+                    viewFoodButton.setOnAction(event -> {
+                        Reservation reservation = findReservation(reservationDisplay);
+                        if (reservation != null) {
+                            Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
+                            // Display ordered plates
+                            showOrderedFoodDialog(orderedPlatesMap);
+                        }
+                    });
+                }
             }
-        }
-    });
-
+        });
 
 
         reservationTable = new TableView<>();
@@ -366,9 +378,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         alert.showAndWait();
     }
 
-
-
-
     private void openDishesPopup(Reservation reservation) {
         // Create a dialog
         Dialog<Void> dialog = new Dialog<>();
@@ -387,8 +396,12 @@ public class MainMerged extends Application implements MainMergedHelper {
         // Create checkboxes and quantity selectors for each plate
         List<CheckBox> checkboxes = new ArrayList<>();
         List<Spinner<Integer>> quantitySpinners = new ArrayList<>();
-        for (int i = 0; i < getAllPlates().size(); i++) {
-            Plate plate = getAllPlates().get(i);
+
+        // Get all available plates from PlateManager
+        List<Plate> allPlates = PlateManager.getAllPlates();
+
+        for (int i = 0; i < allPlates.size(); i++) {
+            Plate plate = allPlates.get(i);
             CheckBox checkbox = new CheckBox(plate.getName());
             Spinner<Integer> quantitySpinner = new Spinner<>(1, 10, 1); // Customize the spinner range as needed
             checkboxes.add(checkbox);
@@ -414,7 +427,7 @@ public class MainMerged extends Application implements MainMergedHelper {
             if (buttonType == buttonTypeOk) {
                 for (int i = 0; i < checkboxes.size(); i++) {
                     if (checkboxes.get(i).isSelected()) {
-                        Plate plate = getAllPlates().get(i);
+                        Plate plate = allPlates.get(i);
                         int quantity = quantitySpinners.get(i).getValue();
                         selectedPlatesMap.put(plate.getName(), quantity);
                     }
@@ -428,8 +441,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         // Show the dialog
         dialog.showAndWait();
     }
-
-
     private void processUnlockEvents() {
         LocalTime currentTime = LocalTime.now(); //  used to retrieve the current local time based on the system clock.
 

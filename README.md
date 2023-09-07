@@ -146,3 +146,8 @@ The initial approach relied on individual timers for each reservation, leading t
 #### Solution: Centralized Time Management System
 
 To overcome these challenges, I implemented a centralized time management system that consistently checks for unlock events at regular intervals and updates table availability based on reservation times.
+
+#### Problem : Unintended Interference of Food Orders Between Reservations in a Restaurant Reservation System:
+
+I faced an issue while developing the restaurant reservation system where food orders for one reservation were unintentionally affecting other reservations. The problem was initially attributed to data sharing among reservations.
+There was a shared reference to the same name variable for all iterations of the loop, causing unexpected behavior in the assignment of food items to reservations. I successfully attempted a solution by using a mapping (dictionary) to store food orders separately for each reservation to store food orders independently.
