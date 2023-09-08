@@ -550,23 +550,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         }
     }
 
-    public boolean isReservationConflicting(Reservation newReservation) {
-        for (Reservation existingReservation : reservations) {
-            if (existingReservation.getTableNumber() == newReservation.getTableNumber()) {
-                LocalTime existingArrival = LocalTime.parse(existingReservation.getArrivalTime());
-                LocalTime existingDeparture = LocalTime.parse(existingReservation.getLeavingTime());
-
-                LocalTime newArrival = LocalTime.parse(newReservation.getArrivalTime());
-                LocalTime newDeparture = LocalTime.parse(newReservation.getLeavingTime());
-
-                if (newArrival.isBefore(existingDeparture) && newDeparture.isAfter(existingArrival)) {
-                    return true; // Conflicting reservation found
-                }
-            }
-        }
-        return false; // No conflicts found
-    }
-
     public LocalTime getLastDepartureTimeForTable(int tableNumber) {
         LocalTime lastDepartureTime = LocalTime.MIN;
         for (Reservation reservation : reservations) {

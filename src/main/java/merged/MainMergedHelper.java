@@ -50,7 +50,7 @@ public interface MainMergedHelper {
      */
     String getCategoryForTable(int tableNumber);
 
-    boolean isReservationConflicting(Reservation newReservation);
+   // boolean isReservationConflicting(Reservation newReservation);
 
     /**
      * Retrieves the last departure time for a given table number.
