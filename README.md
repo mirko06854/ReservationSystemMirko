@@ -155,3 +155,8 @@ There was a shared reference to the same name variable for all iterations of the
 #### Problem : When deleting foods for each reservation if the reservation is not selected before deleting ordered food there is a bug
 
 The bug is that one reservation or more keep staying and the food list cannot be seen. So to see the code working properly you must select the reservation and only than select the food, otherwise is the system don't see the selection there is such bug.
+
+FIX: the problem was in the method firma. We need also the reservation display in this way:
+
+showOrderedFoodDialog(reservation,reservationDisplay);
+}

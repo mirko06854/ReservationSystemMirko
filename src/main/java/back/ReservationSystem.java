@@ -8,15 +8,30 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The `ReservationSystem` class manages reservations and table availability at a restaurant.
+ * It provides methods for adding, removing, and updating reservations, as well as checking
+ * the availability of tables and managing reservation data from JSON files.
+ */
+
 public class ReservationSystem {
     private List<Reservation> reservations;
     private List<Reservation> tables;
 
+    /**
+     * Creates a new instance of the `ReservationSystem` class.
+     * Initializes the list of reservations and reads table data from a JSON file.
+     */
     public ReservationSystem() {
         reservations = new ArrayList<>();
         tables = readReservationDataFromJson();
     }
 
+    /**
+     * Adds a reservation to the system, if the table is available.
+     *
+     * @param reservation The reservation to be added.
+     */
     public void addReservation(Reservation reservation) {
         if (isTableAvailable(reservation.getTableNumber())) {
             reservations.add(reservation);
@@ -27,6 +42,18 @@ public class ReservationSystem {
         }
     }
 
+    /**
+     * Creates a new reservation with the specified details and adds it to the system, if the table is available.
+     *
+     * @param name             The name of the guest.
+     * @param time             The arrival time.
+     * @param tableNumber      The table number.
+     * @param capacity         The table capacity.
+     * @param totalPeople      The total number of people.
+     * @param disabilitiesPeople The number of people with disabilities.
+     * @return The created reservation.
+     * @throws IllegalArgumentException If the table is not available for reservation.
+     */
     public Reservation createReservation(String name, String time, int tableNumber, int capacity, int totalPeople, int disabilitiesPeople) {
         // Validate inputs, calculate category, and create reservation
         String category = calculateCategory(totalPeople, disabilitiesPeople);
@@ -107,6 +134,12 @@ public class ReservationSystem {
             }
         }
     }
+
+    /**
+     * Reads table data from a JSON file and initializes table availability.
+     *
+     * @return A list of table reservations.
+     */
 
     private List<Reservation> readReservationDataFromJson() {
         ObjectMapper objectMapper = new ObjectMapper();

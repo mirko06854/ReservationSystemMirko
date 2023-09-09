@@ -3,9 +3,14 @@ package back;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The `PlateManager` class is responsible for managing a collection of food plates.
+ * It provides access to a list of all available plates and allows retrieval of plates by index.
+ */
 public class PlateManager {
     private static List<Plate> allPlates = new ArrayList<>();
 
+    // Initialize the list of plates with some sample plates
     static {
         allPlates.add(new Plate("Spaghetti Carbonara", 0));
         allPlates.add(new Plate("Margherita Pizza", 1));
@@ -15,15 +20,13 @@ public class PlateManager {
         allPlates.add(new Plate("Chocolate Fondue", 5));
     }
 
+    /**
+     * Retrieves a list of all available plates.
+     *
+     * @return A list of all available plates.
+     */
     public static List<Plate> getAllPlates() {
         return allPlates;
     }
 
-    // Add a method to get a specific plate by index
-    public static Plate getPlateByIndex(int index) {
-        if (index >= 0 && index < allPlates.size()) {
-            return allPlates.get(index);
-        }
-        return null;
-    }
 }
