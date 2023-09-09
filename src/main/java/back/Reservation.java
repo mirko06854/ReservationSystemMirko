@@ -142,4 +142,13 @@ public class Reservation {
     public Map<String, Integer> getPlatesMap() {
         return platesMap;
     }
+
+    public void decrementPlateQuantity(String plateName, int i) {
+        if (platesMap.containsKey(plateName)) {
+            int currentQuantity = platesMap.get(plateName);
+            if (currentQuantity > 0) {
+                platesMap.put(plateName, currentQuantity - 1);
+            }
+        }
+    }
 }

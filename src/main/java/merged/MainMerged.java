@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -266,7 +267,7 @@ public class MainMerged extends Application implements MainMergedHelper {
                         Reservation reservation = findReservation(reservationDisplay);
                         if (reservation != null) {
                             Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
-                            showOrderedFoodDialog(orderedPlatesMap);
+                            showOrderedFoodDialog(orderedPlatesMap,reservation);
                         }
                     });
                 }
@@ -295,7 +296,7 @@ public class MainMerged extends Application implements MainMergedHelper {
                         if (reservation != null) {
                             Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
                             // Display ordered plates
-                            showOrderedFoodDialog(orderedPlatesMap);
+                            showOrderedFoodDialog(orderedPlatesMap,reservation);
                         }
                     });
                 }
@@ -348,35 +349,56 @@ public class MainMerged extends Application implements MainMergedHelper {
         }, 0, 1000); // Check every second for unlock events
     }
 
-    public void showOrderedFoodDialog(Map<String, Integer> orderedPlatesMap) {
+    public void showOrderedFoodDialog(Map<String, Integer> orderedPlatesMap, Reservation reservation) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Ordered Food");
         alert.setHeaderText("Ordered Plates and Quantities");
 
-        // Create a TextArea to display the ordered plates and quantities
-        TextArea textArea = new TextArea();
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
+        // Create a VBox to display the ordered plates, quantities, and pay buttons
+        VBox vBox = new VBox(10);
+        vBox.setAlignment(Pos.CENTER_LEFT);
 
-        // Build the content of the dialog
-        GridPane gridPane = new GridPane();
-        gridPane.setMaxWidth(Double.MAX_VALUE);
-        gridPane.add(textArea, 0, 0);
-
-        // Iterate over the ordered plates map and append them to the TextArea
-        StringBuilder orderedPlatesText = new StringBuilder();
+        // Iterate over the ordered plates map and add them to the VBox
         for (Map.Entry<String, Integer> entry : orderedPlatesMap.entrySet()) {
             String plateName = entry.getKey();
             int quantity = entry.getValue();
-            orderedPlatesText.append(plateName).append(": ").append(quantity).append("\n");
-        }
-        textArea.setText(orderedPlatesText.toString());
 
-        alert.getDialogPane().setContent(gridPane);
+            HBox hBox = new HBox(10);
+            hBox.setAlignment(Pos.CENTER_LEFT);
+
+            // Create a Label to display the plate name and quantity
+            Label label = new Label(plateName + ": " + quantity);
+
+            // Create a Pay button
+            Button payButton = new Button("Pay");
+            payButton.setOnAction(event -> {
+                // Decrement the quantity of the item in the reservation's platesMap
+                reservation.decrementPlateQuantity(plateName, 1); // Decrement by 1
+
+                // Update the label text to reflect the decremented quantity
+                int updatedQuantity = reservation.getPlatesMap().getOrDefault(plateName, 0);
+                label.setText(plateName + ": " + updatedQuantity);
+
+                // If the quantity becomes zero, remove the item from the GUI
+                if (updatedQuantity <= 0) {
+                    vBox.getChildren().remove(hBox);
+                }
+            });
+
+            // Add the Label and Pay button to the HBox
+            hBox.getChildren().addAll(label, payButton);
+
+            // Add the HBox to the VBox
+            vBox.getChildren().add(hBox);
+        }
+
+        alert.getDialogPane().setContent(vBox);
 
         // Show the dialog
         alert.showAndWait();
     }
+
+
 
     private void openDishesPopup(Reservation reservation) {
         // Create a dialog
