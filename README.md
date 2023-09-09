@@ -151,3 +151,7 @@ To overcome these challenges, I implemented a centralized time management system
 
 I faced an issue while developing the restaurant reservation system where food orders for one reservation were unintentionally affecting other reservations. The problem was initially attributed to data sharing among reservations.
 There was a shared reference to the same name variable for all iterations of the loop, causing unexpected behavior in the assignment of food items to reservations. I successfully attempted a solution by using a mapping (dictionary) to store food orders separately for each reservation to store food orders independently.
+
+#### Problem : When deleting foods for each reservation if the reservation is not selected before deleting ordered food there is a bug
+
+The bug is that one reservation or more keep staying and the food list cannot be seen. So to see the code working properly you must select the reservation and only than select the food, otherwise is the system don't see the selection there is such bug.
