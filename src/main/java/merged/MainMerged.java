@@ -350,6 +350,9 @@ public class MainMerged extends Application implements MainMergedHelper {
     }
 
     public void showOrderedFoodDialog(Map<String, Integer> orderedPlatesMap, Reservation reservation) {
+
+        ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Ordered Food");
         alert.setHeaderText("Ordered Plates and Quantities");
@@ -382,6 +385,21 @@ public class MainMerged extends Application implements MainMergedHelper {
                 // If the quantity becomes zero, remove the item from the GUI
                 if (updatedQuantity <= 0) {
                     vBox.getChildren().remove(hBox);
+
+                    // Check if all plates have been paid
+                    if (areAllPlatesPaid(reservation)) {
+                        reservations.remove(reservation);
+                        reservationDisplays.remove(selectedReservation);
+
+                        // Cancel the associated PauseTransition (if exists)
+                        PauseTransition tableTransition = tableTimers.get(reservation.getTable());
+                        if (tableTransition != null) {
+                            tableTransition.stop();
+                            tableTimers.remove(reservation.getTable());
+                        }
+                        updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
+                        serializeJsonFile(); // Save changes to the JSON file
+                    }
                 }
             });
 
@@ -397,6 +415,18 @@ public class MainMerged extends Application implements MainMergedHelper {
         // Show the dialog
         alert.showAndWait();
     }
+
+    // Helper method to check if all plates have been paid
+    private boolean areAllPlatesPaid(Reservation reservation) {
+        Map<String, Integer> platesMap = reservation.getPlatesMap();
+        for (int quantity : platesMap.values()) {
+            if (quantity > 0) {
+                return false; // At least one plate is not paid
+            }
+        }
+        return true; // All plates are paid
+    }
+
 
 
 
@@ -670,7 +700,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         alert.showAndWait();
     }
 
-    private Reservation currentReservation; // Declare a variable to hold the current reservation
     public void addReservation(String name, String time, int tableNumber, int capacity) {
         Reservation reservation = new Reservation(name, time, tableNumber, capacity);
         reservations.add(reservation);
@@ -689,7 +718,6 @@ public class MainMerged extends Application implements MainMergedHelper {
     and their serialization into JSON, otherwise I could have used also a Timeline and keyframe! (async synchronization)
     */
         PauseTransition unlockTransition = new PauseTransition(timeUntilUnlock);
-        currentReservation = reservation;
         unlockTransition.setOnFinished(evt -> {
             updateTableAvailability(reservation.getTableNumber(), String.valueOf(arrivalTime), String.valueOf(unlockTime), getCategoryForTable(tableNumber)); // Unlock the table
             serializeJsonFile();
