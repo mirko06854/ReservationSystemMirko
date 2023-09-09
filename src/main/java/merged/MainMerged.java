@@ -267,7 +267,7 @@ public class MainMerged extends Application implements MainMergedHelper {
                         if (reservation != null) {
                             Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
                             // Display ordered plates
-                            showOrderedFoodDialog(orderedPlatesMap,reservation);
+                            showOrderedFoodDialog(reservation,reservationDisplay);
                         }
                     });
                 }
@@ -320,10 +320,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         }, 0, 1000); // Check every second for unlock events
     }
 
-    public void showOrderedFoodDialog(Map<String, Integer> orderedPlatesMap, Reservation reservation) {
-
-        ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
-
+    public void showOrderedFoodDialog(Reservation reservation, ReservationDisplay selectedReservation) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Ordered Food");
         alert.setHeaderText("Ordered Plates and Quantities");
@@ -333,7 +330,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         vBox.setAlignment(Pos.CENTER_LEFT);
 
         // Iterate over the ordered plates map and add them to the VBox
-        for (Map.Entry<String, Integer> entry : orderedPlatesMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : reservation.getPlatesMap().entrySet()) {
             String plateName = entry.getKey();
             int quantity = entry.getValue();
 
@@ -357,21 +354,20 @@ public class MainMerged extends Application implements MainMergedHelper {
                     // If the quantity becomes zero, remove the item from the GUI
                     if (updatedQuantity <= 0) {
                         vBox.getChildren().remove(hBox);
+
                         // Check if all plates have been paid
                         if (areAllPlatesPaid(reservation)) {
-                            if (selectedReservation != null) {
-                                reservations.remove(reservation);
-                                reservationDisplays.remove(selectedReservation);
+                            reservations.remove(reservation);
+                            reservationDisplays.remove(selectedReservation);
 
-                                // Cancel the associated PauseTransition (if exists)
-                                PauseTransition tableTransition = tableTimers.get(reservation.getTable());
-                                if (tableTransition != null) {
-                                    tableTransition.stop();
-                                    tableTimers.remove(reservation.getTable());
-                                }
-                                updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
-                                serializeJsonFile(); // Save changes to the JSON file
+                            // Cancel the associated PauseTransition (if exists)
+                            PauseTransition tableTransition = tableTimers.get(reservation.getTable());
+                            if (tableTransition != null) {
+                                tableTransition.stop();
+                                tableTimers.remove(reservation.getTable());
                             }
+                            updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
+                            serializeJsonFile(); // Save changes to the JSON file
                         }
                     }
                 });
@@ -389,6 +385,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         // Show the dialog
         alert.showAndWait();
     }
+
 
 
     // Helper method to check if all plates have been paid
