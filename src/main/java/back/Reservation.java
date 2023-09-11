@@ -25,7 +25,7 @@ public class Reservation {
     private LocalTime unlockTime; // New field for unlock time
     private boolean locked; // New field for locked status
 
-    private Map<String,Integer> platesMap;
+    private Map<String, Integer> platesMap;
 
     /**
      * Creates a new reservation with the specified name, arrival time, table number, and capacity.
@@ -134,10 +134,12 @@ public class Reservation {
     public void setCategory(String category) {
         this.category = category;
     }
+
     @JsonIgnore
     public LocalTime getUnlockTime() {
         return unlockTime;
     }
+
     @JsonIgnore
     public boolean isLocked() {
         return locked;
@@ -174,7 +176,7 @@ public class Reservation {
      * Decrements the quantity of a specific plate in the reservation's plates map.
      *
      * @param plateName The name of the plate to decrement.
-     * @param i  The quantity to decrement by.
+     * @param i         The quantity to decrement by.
      */
     public void decrementPlateQuantity(String plateName, int i) {
         if (platesMap.containsKey(plateName)) {

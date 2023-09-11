@@ -76,7 +76,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         primaryStage.show();
 
 
-
         reserveButton.setOnAction(e -> {
             try {
 
@@ -122,7 +121,7 @@ public class MainMerged extends Application implements MainMergedHelper {
 
                 if (!isValidTimeFormat(time)) {
                     showInvalidTimeFormatAlert();
-                    return ;
+                    return;
                 }
 
                 // Get the most recent departure time for the selected table
@@ -267,7 +266,7 @@ public class MainMerged extends Application implements MainMergedHelper {
                         if (reservation != null) {
                             Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
                             // Display ordered plates
-                            showOrderedFoodDialog(reservation,reservationDisplay);
+                            showOrderedFoodDialog(reservation, reservationDisplay);
                         }
                     });
                 }
@@ -277,7 +276,7 @@ public class MainMerged extends Application implements MainMergedHelper {
 
         reservationTable = new TableView<>();
         reservationTable.setId("reservationTable");
-        reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, capacityColumn,viewFoodColumn);
+        reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, capacityColumn, viewFoodColumn);
         reservationTable.setItems(reservationDisplays);
 
         // Add a listener to enable/disable the "Select Dishes for Clients" button based on row selection
@@ -330,53 +329,55 @@ public class MainMerged extends Application implements MainMergedHelper {
         vBox.setAlignment(Pos.CENTER_LEFT);
 
         // Iterate over the ordered plates map and add them to the VBox
-        for (Map.Entry<String, Integer> entry : reservation.getPlatesMap().entrySet()) {
-            String plateName = entry.getKey();
-            int quantity = entry.getValue();
+        if (reservation.getPlatesMap() != null) {
+            for (Map.Entry<String, Integer> entry : reservation.getPlatesMap().entrySet()) {
+                String plateName = entry.getKey();
+                int quantity = entry.getValue();
 
-            if (quantity > 0) { // Only show plates with a positive quantity
-                HBox hBox = new HBox(10);
-                hBox.setAlignment(Pos.CENTER_LEFT);
+                if (quantity > 0) { // Only show plates with a positive quantity
+                    HBox hBox = new HBox(10);
+                    hBox.setAlignment(Pos.CENTER_LEFT);
 
-                // Create a Label to display the plate name and quantity
-                Label label = new Label(plateName + ": " + quantity);
+                    // Create a Label to display the plate name and quantity
+                    Label label = new Label(plateName + ": " + quantity);
 
-                // Create a Pay button
-                Button payButton = new Button("Pay");
-                payButton.setOnAction(event -> {
-                    // Decrement the quantity of the item in the reservation's platesMap
-                    reservation.decrementPlateQuantity(plateName, 1); // Decrement by 1
+                    // Create a Pay button
+                    Button payButton = new Button("Pay");
+                    payButton.setOnAction(event -> {
+                        // Decrement the quantity of the item in the reservation's platesMap
+                        reservation.decrementPlateQuantity(plateName, 1); // Decrement by 1
 
-                    // Update the label text to reflect the decremented quantity
-                    int updatedQuantity = reservation.getPlatesMap().getOrDefault(plateName, 0);
-                    label.setText(plateName + ": " + updatedQuantity);
+                        // Update the label text to reflect the decremented quantity
+                        int updatedQuantity = reservation.getPlatesMap().getOrDefault(plateName, 0);
+                        label.setText(plateName + ": " + updatedQuantity);
 
-                    // If the quantity becomes zero, remove the item from the GUI
-                    if (updatedQuantity <= 0) {
-                        vBox.getChildren().remove(hBox);
+                        // If the quantity becomes zero, remove the item from the GUI
+                        if (updatedQuantity <= 0) {
+                            vBox.getChildren().remove(hBox);
 
-                        // Check if all plates have been paid
-                        if (areAllPlatesPaid(reservation)) {
-                            reservations.remove(reservation);
-                            reservationDisplays.remove(selectedReservation);
+                            // Check if all plates have been paid
+                            if (areAllPlatesPaid(reservation)) {
+                                reservations.remove(reservation);
+                                reservationDisplays.remove(selectedReservation);
 
-                            // Cancel the associated PauseTransition (if exists)
-                            PauseTransition tableTransition = tableTimers.get(reservation.getTable());
-                            if (tableTransition != null) {
-                                tableTransition.stop();
-                                tableTimers.remove(reservation.getTable());
+                                // Cancel the associated PauseTransition (if exists)
+                                PauseTransition tableTransition = tableTimers.get(reservation.getTable());
+                                if (tableTransition != null) {
+                                    tableTransition.stop();
+                                    tableTimers.remove(reservation.getTable());
+                                }
+                                updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
+                                serializeJsonFile(); // Save changes to the JSON file
                             }
-                            updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
-                            serializeJsonFile(); // Save changes to the JSON file
                         }
-                    }
-                });
+                    });
 
-                // Add the Label and Pay button to the HBox
-                hBox.getChildren().addAll(label, payButton);
+                    // Add the Label and Pay button to the HBox
+                    hBox.getChildren().addAll(label, payButton);
 
-                // Add the HBox to the VBox
-                vBox.getChildren().add(hBox);
+                    // Add the HBox to the VBox
+                    vBox.getChildren().add(hBox);
+                }
             }
         }
 
@@ -385,7 +386,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         // Show the dialog
         alert.showAndWait();
     }
-
 
 
     // Helper method to check if all plates have been paid
@@ -398,8 +398,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         }
         return true; // All plates are paid
     }
-
-
 
 
     private void openDishesPopup(Reservation reservation) {
@@ -465,6 +463,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         // Show the dialog
         dialog.showAndWait();
     }
+
     private void processUnlockEvents() {
         LocalTime currentTime = LocalTime.now(); //  used to retrieve the current local time based on the system clock.
 

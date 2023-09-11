@@ -26,10 +26,10 @@ public class Table {
     /**
      * Constructs a new `Table` instance with the specified properties.
      *
-     * @param tableNumber  The unique identifier for the table.
-     * @param capacity     The maximum number of guests the table can accommodate.
-     * @param arrivalTime  The time when guests can arrive at the table.
-     * @param leavingTime  The time when guests must leave the table.
+     * @param tableNumber The unique identifier for the table.
+     * @param capacity    The maximum number of guests the table can accommodate.
+     * @param arrivalTime The time when guests can arrive at the table.
+     * @param leavingTime The time when guests must leave the table.
      * @throws IllegalArgumentException If table number or capacity is negative.
      */
     public Table(int tableNumber, int capacity, String arrivalTime, String leavingTime) {

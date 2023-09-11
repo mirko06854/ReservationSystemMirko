@@ -45,11 +45,11 @@ public class ReservationSystem {
     /**
      * Creates a new reservation with the specified details and adds it to the system, if the table is available.
      *
-     * @param name             The name of the guest.
-     * @param time             The arrival time.
-     * @param tableNumber      The table number.
-     * @param capacity         The table capacity.
-     * @param totalPeople      The total number of people.
+     * @param name               The name of the guest.
+     * @param time               The arrival time.
+     * @param tableNumber        The table number.
+     * @param capacity           The table capacity.
+     * @param totalPeople        The total number of people.
      * @param disabilitiesPeople The number of people with disabilities.
      * @return The created reservation.
      * @throws IllegalArgumentException If the table is not available for reservation.

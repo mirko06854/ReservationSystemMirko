@@ -12,7 +12,7 @@ public class Plate {
      * Constructs a `Plate` object with the specified name.
      *
      * @param name The name of the plate.
-     * @param i The number of plates.
+     * @param i    The number of plates.
      */
     public Plate(String name, int i) {
         this.name = name;
