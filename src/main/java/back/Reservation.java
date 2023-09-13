@@ -75,7 +75,7 @@ public class Reservation {
     }
 
     public void setAvailable(boolean available) {
-        table.setAvailable(available);
+        table.setAvailable(!available);
     }
 
     @JsonIgnore

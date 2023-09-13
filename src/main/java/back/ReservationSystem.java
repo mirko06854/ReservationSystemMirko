@@ -35,7 +35,7 @@ public class ReservationSystem {
     private void addReservation(Reservation reservation) {
         if (isTableAvailable(reservation.getTableNumber())) {
             reservations.add(reservation);
-            updateTableAvailability(reservation.getTableNumber(), true);
+            updateTableAvailability(reservation.getTableNumber(), false);
             System.out.println("Reservation added: " + reservation);
         } else {
             System.out.println("Table not available for reservation: " + reservation.getTableNumber());

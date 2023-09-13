@@ -46,7 +46,7 @@ public class Table {
         this.capacity = capacity;
         this.arrivalTime = arrivalTime;
         this.leavingTime = leavingTime;
-        this.isAvailable = true; // Set the initial availability to true (assumption)
+        this.isAvailable = isAvailable(); // Set the initial availability to true (assumption)
     }
 
     public Table() {
