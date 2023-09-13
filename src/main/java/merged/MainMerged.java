@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.*;
 
-import static back.PlateManager.getAllPlates;
 
 public class MainMerged extends Application implements MainMergedHelper {
     public ObservableList<Reservation> reservations = FXCollections.observableArrayList();
@@ -131,11 +130,6 @@ public class MainMerged extends Application implements MainMergedHelper {
                 LocalTime newArrivalTime = calculateArrivalTime(time);
                 LocalTime newDepartureTime = newArrivalTime.plusHours(2);
 
-                /* Note:  compare the new reservation's arrival time with the unlock time of the most recent reservation
-                for the same table. If the new reservation's arrival time is after this unlock time, then there
-                shouldn't be any overlap, and you can proceed to add the reservation. So I added the logic and to fix unexpected warnings !
-                 MOVED!!! */
-
                 // Calculate the unlock time based on the last departure time
                 LocalTime unlockTime = lastDepartureTime.plusMinutes(1); // Add a small buffer
 
@@ -181,19 +175,9 @@ public class MainMerged extends Application implements MainMergedHelper {
                 }
             }
 
-            // Clear reservations and reservationDisplays
-            reservations.clear();
-            reservationDisplays.clear();
+            cleanJsonAndReservations();
 
-            // Clear table data and refresh display
-            reservationTable.getItems().clear();
-            reservationTable.refresh();
 
-            // Clear input fields
-            clearInputFields();
-
-            // Serialize and save changes to the JSON file
-            serializeJsonFile();
         });
 
 
@@ -231,7 +215,6 @@ public class MainMerged extends Application implements MainMergedHelper {
 
 
         loadReservedTables();
-
         TableColumn<ReservationDisplay, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
@@ -357,6 +340,8 @@ public class MainMerged extends Application implements MainMergedHelper {
 
                             // Check if all plates have been paid
                             if (areAllPlatesPaid(reservation)) {
+
+                                // Remove the reservation and associated GUI displa
                                 reservations.remove(reservation);
                                 reservationDisplays.remove(selectedReservation);
 
@@ -366,6 +351,8 @@ public class MainMerged extends Application implements MainMergedHelper {
                                     tableTransition.stop();
                                     tableTimers.remove(reservation.getTable());
                                 }
+
+                                // Update table availability, save changes, and trigger category updates
                                 updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
                                 serializeJsonFile(); // Save changes to the JSON file
                             }
@@ -387,9 +374,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         alert.showAndWait();
     }
 
-
-    // Helper method to check if all plates have been paid
-    private boolean areAllPlatesPaid(Reservation reservation) {
+    public boolean areAllPlatesPaid(Reservation reservation) {
         Map<String, Integer> platesMap = reservation.getPlatesMap();
         for (int quantity : platesMap.values()) {
             if (quantity > 0) {
@@ -400,7 +385,7 @@ public class MainMerged extends Application implements MainMergedHelper {
     }
 
 
-    private void openDishesPopup(Reservation reservation) {
+    public void openDishesPopup(Reservation reservation) {
         // Create a dialog
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Select Dishes");
@@ -554,15 +539,19 @@ public class MainMerged extends Application implements MainMergedHelper {
         }
     }
 
-    public void cleanJson() {
+    public void cleanJsonAndReservations() {
+        // Clear reservations and reservationDisplays
         reservations.clear();
         reservationDisplays.clear();
-        serializeJsonFile();
-    }
 
-    @Override
-    public void stop() {
-        // Save changes to the JSON file when the application is closed
+        // Clear table data and refresh display
+        reservationTable.getItems().clear();
+        reservationTable.refresh();
+
+        // Clear input fields
+        clearInputFields();
+
+        // Serialize and save changes to the JSON file
         serializeJsonFile();
     }
 
@@ -671,15 +660,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         }
 
         return true; // Validation passed
-    }
-
-
-    public void showReservedAlert(int tableNumber, String time) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Table Already Reserved");
-        alert.setHeaderText("Table " + tableNumber + " is already reserved during the selected time.");
-        alert.setContentText("Please try a different table number or book at another time slot if all tables are booked.");
-        alert.showAndWait();
     }
 
     public void addReservation(String name, String time, int tableNumber, int capacity) {

@@ -67,4 +67,3 @@ public class ReservationDisplay {
         remainingTime.set(minutes);
     }
 }
-

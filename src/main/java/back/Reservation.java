@@ -89,11 +89,6 @@ public class Reservation {
     }
 
     @JsonIgnore
-    public StringProperty getLeavingTimeProperty() {
-        return new SimpleStringProperty(leavingTime);
-    }
-
-    @JsonIgnore
     public SimpleIntegerProperty getTableNumberProperty() {
         return new SimpleIntegerProperty(table.getTableNumber());
     }

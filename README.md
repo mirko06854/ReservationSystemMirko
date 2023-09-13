@@ -159,4 +159,37 @@ The bug is that one reservation or more keep staying and the food list cannot be
 FIX: the problem was in the method firma. We need also the reservation display in this way:
 
 showOrderedFoodDialog(reservation,reservationDisplay);
+
+#### Problem : When attaching foods for each reservation in a second moment, all the other ones, even the not payed one were overridden.
+
+FIX: uploaded both the method " openDishesPopUp(Reservation reservation) " in this way:
+
+~~~
+
+...
+
+// Append the new plates and quantities to the existing selectedPlatesMap
+String plateName = plate.getName();
+int existingQuantity = selectedPlatesMap.getOrDefault(plateName, 0);
+selectedPlatesMap.put(plateName, existingQuantity + quantity);
 }
+}
+// Update the reservation with the updated selectedPlatesMap
+reservation.setPlatesMap(selectedPlatesMap);
+}
+
+...
+~~~
+
+as well as modified this in the constructor of Reservation class:
+~~~
+this.platesMap = new HashMap<>();
+~~~
+
+before I had:
+
+~~~
+this.platesMap = platesMap;
+~~~
+
+which didn't initialise anything.

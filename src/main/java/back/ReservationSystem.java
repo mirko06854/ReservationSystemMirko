@@ -32,7 +32,7 @@ public class ReservationSystem {
      *
      * @param reservation The reservation to be added.
      */
-    public void addReservation(Reservation reservation) {
+    private void addReservation(Reservation reservation) {
         if (isTableAvailable(reservation.getTableNumber())) {
             reservations.add(reservation);
             updateTableAvailability(reservation.getTableNumber(), true);
@@ -54,7 +54,7 @@ public class ReservationSystem {
      * @return The created reservation.
      * @throws IllegalArgumentException If the table is not available for reservation.
      */
-    public Reservation createReservation(String name, String time, int tableNumber, int capacity, int totalPeople, int disabilitiesPeople) {
+    private Reservation createReservation(String name, String time, int tableNumber, int capacity, int totalPeople, int disabilitiesPeople) {
         // Validate inputs, calculate category, and create reservation
         String category = calculateCategory(totalPeople, disabilitiesPeople);
         Reservation reservation = new Reservation(name, time, tableNumber, capacity);
@@ -71,7 +71,7 @@ public class ReservationSystem {
     }
 
 
-    public void removeReservation(Reservation reservation) {
+    private void removeReservation(Reservation reservation) {
         if (reservations.remove(reservation)) {
             updateTableAvailability(reservation.getTableNumber(), true);
             System.out.println("Reservation removed: " + reservation);
@@ -80,7 +80,7 @@ public class ReservationSystem {
         }
     }
 
-    public void updateReservation(Reservation oldReservation, Reservation newReservation) {
+    private void updateReservation(Reservation oldReservation, Reservation newReservation) {
         if (reservations.contains(oldReservation)) {
             if (!isTableReserved(newReservation.getTableNumber(), newReservation.getArrivalTime(), newReservation.getLeavingTime())) {
                 reservations.remove(oldReservation);
