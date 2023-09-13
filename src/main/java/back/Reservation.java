@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -46,7 +47,7 @@ public class Reservation {
         // Calculate unlock time as 1 minute after leaving time (adjust as needed)
         this.unlockTime = LocalTime.parse(leavingTime).plusMinutes(1);
         this.locked = true; // Mark reservation as locked initially
-        this.platesMap = platesMap; // Initialize the list of plates
+        this.platesMap = new HashMap<>(); // Initialize the list of plates, this what the problem when the reservation's orders couldn't be attached.
     }
 
     public String getName() {
@@ -186,4 +187,5 @@ public class Reservation {
             }
         }
     }
+
 }

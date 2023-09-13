@@ -422,12 +422,21 @@ public class MainMerged extends Application implements MainMergedHelper {
         // Get all available plates from PlateManager
         List<Plate> allPlates = PlateManager.getAllPlates();
 
+        // Initialize selectedPlatesMap with the existing plates for the reservation
+        Map<String, Integer> selectedPlatesMap = new HashMap<>(reservation.getPlatesMap());
+
         for (int i = 0; i < allPlates.size(); i++) {
             Plate plate = allPlates.get(i);
             CheckBox checkbox = new CheckBox(plate.getName());
             Spinner<Integer> quantitySpinner = new Spinner<>(1, 10, 1); // Customize the spinner range as needed
             checkboxes.add(checkbox);
             quantitySpinners.add(quantitySpinner);
+
+            // Set the checkbox as selected if the plate is in the selectedPlatesMap
+            if (selectedPlatesMap.containsKey(plate.getName())) {
+                checkbox.setSelected(true);
+                quantitySpinner.getValueFactory().setValue(selectedPlatesMap.get(plate.getName()));
+            }
 
             // Add checkboxes and quantity selectors to the grid
             grid.add(checkbox, 0, i);
@@ -441,9 +450,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
 
-        // Declare a Map to store selected plates and their quantities
-        Map<String, Integer> selectedPlatesMap = new HashMap<>();
-
         // When OK is clicked, collect the selected plates and quantities
         dialog.setResultConverter(buttonType -> {
             if (buttonType == buttonTypeOk) {
@@ -451,10 +457,14 @@ public class MainMerged extends Application implements MainMergedHelper {
                     if (checkboxes.get(i).isSelected()) {
                         Plate plate = allPlates.get(i);
                         int quantity = quantitySpinners.get(i).getValue();
-                        selectedPlatesMap.put(plate.getName(), quantity);
+
+                        // Append the new plates and quantities to the existing selectedPlatesMap
+                        String plateName = plate.getName();
+                        int existingQuantity = selectedPlatesMap.getOrDefault(plateName, 0);
+                        selectedPlatesMap.put(plateName, existingQuantity + quantity);
                     }
                 }
-                // Update the reservation with the selected plates map
+                // Update the reservation with the updated selectedPlatesMap
                 reservation.setPlatesMap(selectedPlatesMap);
             }
             return null; // Return null for other cases (e.g., Cancel)
@@ -463,6 +473,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         // Show the dialog
         dialog.showAndWait();
     }
+
 
     private void processUnlockEvents() {
         LocalTime currentTime = LocalTime.now(); //  used to retrieve the current local time based on the system clock.
