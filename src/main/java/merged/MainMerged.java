@@ -118,6 +118,12 @@ public class MainMerged extends Application implements MainMergedHelper {
                     category = "Normal"; // Set category to "Normal" in this special case
                 }
 
+                // If we have 5 people with Special Needs we wish to split such people in their own tables.
+                if (totalPeople > 3 && disabilitiesPeople == 5) {
+                    showRecommendation(); // Suggest to add such group to another table.
+                    return;
+                }
+
                 if (!isValidTimeFormat(time)) {
                     showInvalidTimeFormatAlert();
                     return;
@@ -638,6 +644,14 @@ public class MainMerged extends Application implements MainMergedHelper {
         alert.setTitle("Invalid Time Format");
         alert.setHeaderText("Invalid time format");
         alert.setContentText("Please enter the time in the format HH:mm (e.g., 09:00).");
+        alert.showAndWait();
+    }
+
+    public void showRecommendation() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("spit");
+        alert.setHeaderText("adding groups together");
+        alert.setContentText("Please split such people in 2 tables designed for people with Special Needs.");
         alert.showAndWait();
     }
 

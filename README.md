@@ -91,7 +91,10 @@ I have assumed to be a Restaurant waiter. My restaurant is very small. In my res
 
 * CASE 1 : number of people >> number of people with disabilities implies that such group will take place in one of the first 5 tables.
 * CASE 2: number of people with disabilities >> number of people implies that such group will take place in one of the last 5 tables
-* SPECIAL CASE: number of people with disabilities >>  number of people && number of people with disabilities >= 3 implies that such group will take place in one of the first 5 tables
+* SPECIAL CASE: number of people with disabilities >>  number of people && number of people with disabilities >= 3 implies that such group will take place in one of the first 5 tables. But not when we have 5 people with Special Needs and 0 people. In such case we have an alert forcing us calling such users later on and make such people sitting in 2 tables designed for such people . So the solution in this case is logically to have :
+
+one table designed for people with Special Needs composed by 3 of such people of the last group + another table composed by the other 2 people with disabilities and another person ( another person : that can be either another person with disabilities or a person).
+
 
 
 ### Examples
