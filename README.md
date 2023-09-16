@@ -3,9 +3,42 @@
 ---
 ## Description: 
 
-The Reservation System application is designed to facilitate the reservation and management of tables in a dining establishment. It aims to simplify the process of making reservations, ensure efficient utilization of available tables, and manage reservation-related tasks.
+The Reservation System application is designed to facilitate the reservation and management of tables in a dining establishment. It aims to simplify the process of making reservations, ensure efficient utilization of available tables, and manage reservation-related tasks. Moreover is also possible to add a food list for each reservation.
 
 ---
+
+## Reservation App User Guide:
+
+
+### Reservation Time Limit
+
+Each reservation in the app has a fixed time limit of 2 hours.
+Reservations cannot overlap within this 2-hour time frame.
+Manual deletion of reservations is required to free up time slots.
+
+### Reservation Actions:
+
+1. Select Dishes
+
+Click the "Select Dishes" button to choose dishes for a selected reservation. Please note that this action is only available when a single reservation is selected.
+
+2. Show Paid Dishes
+
+Use the "Show Paid Dishes" button to view the dishes that require payment.
+This action is available for each reservation.
+
+### Reservation Management:
+
+1. Delete a Reservation
+
+To delete a reservation, locate the "Delete" button. Click this button to remove the selected reservation. Works for each reservation selected.
+
+2. Clean All Reservations
+
+You can clean all reservations at once by using the "Clean All Reservations" button. This action clears all reservations from the app.
+
+---
+
 ## Structure:
 
 This application is composed by three packages:
@@ -110,7 +143,7 @@ By following this seating arrangement logic, we aim to provide an inclusive and 
 ---
 
 
-### Explaination of warnings that a waiter may encounter while using the app:
+### Explanation of warnings that a waiter may encounter while using the app:
 
 
 
