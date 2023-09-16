@@ -188,23 +188,7 @@ public class MainMerged extends Application implements MainMergedHelper {
 
 
         deleteButton.setOnAction(e -> {
-            ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
-            if (selectedReservation != null) {
-                Reservation reservation = findReservation(selectedReservation);
-                if (reservation != null) {
-                    reservations.remove(reservation);
-                    reservationDisplays.remove(selectedReservation);
-
-                    // Cancel the associated PauseTransition (if exists)
-                    PauseTransition tableTransition = tableTimers.get(reservation.getTable());
-                    if (tableTransition != null) {
-                        tableTransition.stop();
-                        tableTimers.remove(reservation.getTable());
-                    }
-                    updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
-                    serializeJsonFile(); // Save changes to the JSON file
-                }
-            }
+            deleteEachReservation();
         });
 
         selectDishesButton.setOnAction(event -> {
@@ -346,21 +330,7 @@ public class MainMerged extends Application implements MainMergedHelper {
 
                             // Check if all plates have been paid
                             if (areAllPlatesPaid(reservation)) {
-
-                                // Remove the reservation and associated GUI displa
-                                reservations.remove(reservation);
-                                reservationDisplays.remove(selectedReservation);
-
-                                // Cancel the associated PauseTransition (if exists)
-                                PauseTransition tableTransition = tableTimers.get(reservation.getTable());
-                                if (tableTransition != null) {
-                                    tableTransition.stop();
-                                    tableTimers.remove(reservation.getTable());
-                                }
-
-                                // Update table availability, save changes, and trigger category updates
-                                updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
-                                serializeJsonFile(); // Save changes to the JSON file
+                               deleteEachReservation();
                             }
                         }
                     });
@@ -542,6 +512,26 @@ public class MainMerged extends Application implements MainMergedHelper {
             objectMapper.writeValue(file, reservations);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void deleteEachReservation() {
+        ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
+        if (selectedReservation != null) {
+            Reservation reservation = findReservation(selectedReservation);
+            if (reservation != null) {
+                reservations.remove(reservation);
+                reservationDisplays.remove(selectedReservation);
+
+                // Cancel the associated PauseTransition (if exists)
+                PauseTransition tableTransition = tableTimers.get(reservation.getTable());
+                if (tableTransition != null) {
+                    tableTransition.stop();
+                    tableTimers.remove(reservation.getTable());
+                }
+                updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
+                serializeJsonFile(); // Save changes to the JSON file
+            }
         }
     }
 
