@@ -1,0 +1,42 @@
+# Maven build directory
+/target/
+
+# IDE files
+.idea/
+.vscode/
+
+# Compiled Java class files
+*.class
+
+# Compiled Maven test class files
+*Test.class
+
+# Maven-specific files
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# Maven Eclipse Plugin
+.classpath
+.project
+.settings/
+
+# Maven IntelliJ Plugin
+*.iml
+*.iws
+*.ipr
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Windows thumbnail cache
+Thumbs.db
+
+# Ignore temporary files created by text editors
+ *~

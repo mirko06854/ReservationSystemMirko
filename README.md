@@ -229,3 +229,49 @@ this.platesMap = platesMap;
 ~~~
 
 which didn't initialise anything.
+
+---
+
+# Programming Techniques in My Application
+
+## 1. Collections
+I utilize JavaFX's Observable List to manage and display reservations in a table view, ensuring smooth interaction and data management.
+
+## 2. Custom Exceptions
+I have implemented custom exceptions in my code, including `IllegalArgumentException` for input validation, and a custom exception called `ReservationSystemException` for specific reservation-related errors.
+
+## 3. Try-Catch Blocks
+To ensure robust error handling, I employ try-catch blocks for handling exceptions in my code, enhancing the application's stability.
+
+## 4. Method Overloading
+I leverage method overloading in various event handlers, such as `reserveButton.setOnAction(...)`, and `showInvalidInputAlert(...)`, allowing for flexibility in handling different types of inputs.
+
+## 5. Lambda Expressions
+I use lambda expressions for event handling within my code. For instance, in `reserveButton.setOnAction(e -> { ... })`, lambda expressions enhance the readability and conciseness of the code.
+
+## 6. File I/O Operations
+My application incorporates file I/O operations to read and write reservation data to and from a JSON file, ensuring persistent data storage.
+
+## 7. Serialization (to JSON)
+For JSON serialization, I rely on Jackson's ObjectMapper, enabling me to convert objects to JSON format for storage and transmission purposes.
+
+## 8. Deserialization (from JSON)
+I use Jackson's ObjectMapper for JSON deserialization, allowing me to parse JSON data back into objects within my application, ensuring seamless data retrieval.
+
+## 9. Resource Sharing (Between Threads)
+I manage resource sharing between threads using the `tableTimers` map, ensuring proper synchronization and preventing conflicts in concurrent operations.
+
+## 10. Test Hooks
+In my code, I incorporate test hooks for various testing purposes, including setup and teardown procedures, facilitating efficient and comprehensive testing.
+
+## 11. Graphical User Interface (JavaFX)
+My application features a JavaFX graphical user interface, providing an interactive platform for users to interact with the system, enhancing user experience.
+
+## 12. Regular Expressions (Regex)
+I employ regular expressions to split and validate time (hours/minutes) input, ensuring accurate and reliable data processing.
+
+---
+
+## Learning outcomes:
+
+Coding this reservation system was an enlightening journey. I have particularly enjoyed and developed serialization and deserialization skills. Additionally, my testing abilities, which I have improved following a testing specific course at university, received a significant boost. This project gave me the opportunity to put in practice what I have learnt in such course. 
