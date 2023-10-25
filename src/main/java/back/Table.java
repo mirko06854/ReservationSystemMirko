@@ -17,12 +17,6 @@ public class Table {
     @JsonProperty("available")
     private boolean isAvailable;
 
-    @JsonProperty("arrivalTime")
-    private String arrivalTime;
-
-    @JsonProperty("leavingTime")
-    private String leavingTime;
-
     /**
      * Constructs a new `Table` instance with the specified properties.
      *
@@ -44,8 +38,6 @@ public class Table {
         }
         this.tableNumber = tableNumber;
         this.capacity = capacity;
-        this.arrivalTime = arrivalTime;
-        this.leavingTime = leavingTime;
         this.isAvailable = isAvailable(); // Set the initial availability to true (assumption)
     }
 
@@ -67,14 +59,6 @@ public class Table {
 
     public void setAvailable(boolean available) {
         isAvailable = available;
-    }
-
-    public String getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public String getLeavingTime() {
-        return leavingTime;
     }
 
     @Override

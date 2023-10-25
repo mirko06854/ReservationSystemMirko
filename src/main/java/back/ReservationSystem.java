@@ -15,8 +15,8 @@ import java.util.List;
  */
 
 public class ReservationSystem {
-    private List<Reservation> reservations;
-    private List<Reservation> tables;
+    private final List<Reservation> reservations;
+    private final List<Reservation> tables;
 
     /**
      * Creates a new instance of the `ReservationSystem` class.
@@ -25,49 +25,6 @@ public class ReservationSystem {
     public ReservationSystem() {
         reservations = new ArrayList<>();
         tables = readReservationDataFromJson();
-    }
-
-    /**
-     * Adds a reservation to the system, if the table is available.
-     *
-     * @param reservation The reservation to be added.
-     */
-    private void addReservation(Reservation reservation) {
-        if (isTableAvailable(reservation.getTableNumber())) {
-            reservations.add(reservation);
-            updateTableAvailability(reservation.getTableNumber(), false);
-            System.out.println("Reservation added: " + reservation);
-        } else {
-            System.out.println("Table not available for reservation: " + reservation.getTableNumber());
-        }
-    }
-
-    /**
-     * Creates a new reservation with the specified details and adds it to the system, if the table is available.
-     *
-     * @param name               The name of the guest.
-     * @param time               The arrival time.
-     * @param tableNumber        The table number.
-     * @param capacity           The table capacity.
-     * @param totalPeople        The total number of people.
-     * @param disabilitiesPeople The number of people with disabilities.
-     * @return The created reservation.
-     * @throws IllegalArgumentException If the table is not available for reservation.
-     */
-    private Reservation createReservation(String name, String time, int tableNumber, int capacity, int totalPeople, int disabilitiesPeople) {
-        // Validate inputs, calculate category, and create reservation
-        String category = calculateCategory(totalPeople, disabilitiesPeople);
-        Reservation reservation = new Reservation(name, time, tableNumber, capacity);
-        reservation.setCategory(category);
-
-        // Check table availability and add reservation
-        if (isTableAvailable(tableNumber)) {
-            reservations.add(reservation);
-            updateTableAvailability(tableNumber, false); // Table is now reserved
-            return reservation;
-        } else {
-            throw new IllegalArgumentException("Table " + tableNumber + " is not available for reservation.");
-        }
     }
 
 
@@ -80,22 +37,6 @@ public class ReservationSystem {
         }
     }
 
-    private void updateReservation(Reservation oldReservation, Reservation newReservation) {
-        if (reservations.contains(oldReservation)) {
-            if (!isTableReserved(newReservation.getTableNumber(), newReservation.getArrivalTime(), newReservation.getLeavingTime())) {
-                reservations.remove(oldReservation);
-                reservations.add(newReservation);
-                updateTableAvailability(oldReservation.getTableNumber(), true);
-                updateTableAvailability(newReservation.getTableNumber(), false);
-                System.out.println("Reservation updated: " + oldReservation + " -> " + newReservation);
-            } else {
-                System.out.println("Table already reserved at the given time: " + newReservation.getTableNumber());
-            }
-        } else {
-            System.out.println("Reservation not found: " + oldReservation);
-        }
-    }
-
     public boolean isTableAvailable(int tableNumber) {
         if (tables != null) {
             for (Reservation table : tables) {
@@ -105,24 +46,6 @@ public class ReservationSystem {
             }
         }
         return false; // Table not found, consider as unavailable
-    }
-
-    public boolean isTableReserved(int tableNumber, String arrivalTime, String leavingTime) {
-        for (Reservation reservation : reservations) {
-            if (reservation.getTableNumber() == tableNumber) {
-                // Check for overlapping reservations
-                if (!reservation.isAvailable()) {
-                    String existingArrivalTime = reservation.getTable().getArrivalTime();
-                    String existingLeavingTime = reservation.getTable().getLeavingTime();
-
-                    // Check if the existing reservation overlaps with the new reservation's time range
-                    if (arrivalTime.compareTo(existingLeavingTime) < 0 && leavingTime.compareTo(existingArrivalTime) > 0) {
-                        return true; // Table is already reserved at an overlapping time
-                    }
-                }
-            }
-        }
-        return false; // Table is not reserved at the given time range
     }
 
 
@@ -144,7 +67,7 @@ public class ReservationSystem {
     private List<Reservation> readReservationDataFromJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            List<Reservation> reservations = objectMapper.readValue(new File("src/main/resources/tables.json"), new TypeReference<List<Reservation>>() {
+            List<Reservation> reservations = objectMapper.readValue(new File("src/main/resources/tables.json"), new TypeReference<>() {
             });
 
             // Set the availability property of each table for each reservation

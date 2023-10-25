@@ -388,15 +388,15 @@ public class MainMerged extends Application implements MainMergedHelper {
 
         for (int i = 0; i < allPlates.size(); i++) {
             Plate plate = allPlates.get(i);
-            CheckBox checkbox = new CheckBox(plate.getName());
+            CheckBox checkbox = new CheckBox(plate.name());
             Spinner<Integer> quantitySpinner = new Spinner<>(1, 10, 1); // Customize the spinner range as needed
             checkboxes.add(checkbox);
             quantitySpinners.add(quantitySpinner);
 
             // Set the checkbox as selected if the plate is in the selectedPlatesMap
-            if (selectedPlatesMap.containsKey(plate.getName())) {
+            if (selectedPlatesMap.containsKey(plate.name())) {
                 checkbox.setSelected(true);
-                quantitySpinner.getValueFactory().setValue(selectedPlatesMap.get(plate.getName()));
+                quantitySpinner.getValueFactory().setValue(selectedPlatesMap.get(plate.name()));
             }
 
             // Add checkboxes and quantity selectors to the grid
@@ -420,7 +420,7 @@ public class MainMerged extends Application implements MainMergedHelper {
                         int quantity = quantitySpinners.get(i).getValue();
 
                         // Append the new plates and quantities to the existing selectedPlatesMap
-                        String plateName = plate.getName();
+                        String plateName = plate.name();
                         int existingQuantity = selectedPlatesMap.getOrDefault(plateName, 0);
                         selectedPlatesMap.put(plateName, existingQuantity + quantity);
                     }

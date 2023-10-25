@@ -16,14 +16,14 @@ import java.util.Map;
  * and a map of ordered plates.
  */
 public class Reservation {
-    private String name;
-    private String arrivalTime;
-    private String leavingTime;
-    private Table table;
+    private final String name;
+    private final String arrivalTime;
+    private final String leavingTime;
+    private final Table table;
 
     private String category;
 
-    private LocalTime unlockTime; // New field for unlock time
+    private final LocalTime unlockTime; // New field for unlock time
     private boolean locked; // New field for locked status
 
     private Map<String, Integer> platesMap;
