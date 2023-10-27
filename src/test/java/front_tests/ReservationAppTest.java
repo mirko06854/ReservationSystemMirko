@@ -1,7 +1,6 @@
 package front_tests;
 
 import front.ReservationApp;
-import javafx.collections.FXCollections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +13,6 @@ class ReservationAppTest {
     @BeforeEach
     void setUp() {
         reservationApp = new ReservationApp();
-        reservationApp.setReservations(FXCollections.observableArrayList());
     }
 
     @Test
@@ -41,7 +39,5 @@ class ReservationAppTest {
         // Call the addReservation method
         assertThrows(NumberFormatException.class, () -> reservationApp.addReservation(name, arrivalTime, Integer.parseInt(invalidTableNumber), Integer.parseInt(invalidCapacity)));
 
-        // Assert that no reservation is added to the reservations list
-        // assertEquals(0, reservationApp.getReservations().size());
     }
 }

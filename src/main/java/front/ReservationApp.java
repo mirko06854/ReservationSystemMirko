@@ -15,12 +15,7 @@ import javafx.stage.Stage;
 
 public class ReservationApp extends Application {
 
-    private TableView<Reservation> reservationTable;
     private ObservableList<Reservation> reservations;
-
-    public ObservableList<Reservation> getReservations() {
-        return reservations;
-    }
 
     public static void main(String[] args) {
         launch(args);
@@ -37,36 +32,12 @@ public class ReservationApp extends Application {
         TableColumn<Reservation, String> timeColumn = new TableColumn<>("arrivalTime");
         timeColumn.setCellValueFactory(data -> data.getValue().getArrivalTimeProperty());
 
-        TableColumn<Reservation, Integer> tableNumberColumn = new TableColumn<>("Table Number");
-        tableNumberColumn.setCellValueFactory(data -> data.getValue().getTableNumberProperty().asObject());
-        tableNumberColumn.setCellFactory(column -> new TableCell<Reservation, Integer>() {
-            @Override
-            protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(String.valueOf(item));
-                }
-            }
-        });
+        TableColumn<Reservation, Integer> tableNumberColumn = getReservationIntegerTableColumn();
 
-        TableColumn<Reservation, Integer> capacityColumn = new TableColumn<>("Capacity");
-        capacityColumn.setCellValueFactory(data -> data.getValue().getCapacityProperty().asObject());
-        capacityColumn.setCellFactory(column -> new TableCell<Reservation, Integer>() {
-            @Override
-            protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(String.valueOf(item));
-                }
-            }
-        });
+        TableColumn<Reservation, Integer> capacityColumn = getCapacityColumn();
 
         // Create the table and set the columns
-        reservationTable = new TableView<>();
+        TableView<Reservation> reservationTable = new TableView<>();
         reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, capacityColumn);
 
         Label nameLabel = new Label("Name:");
@@ -131,6 +102,40 @@ public class ReservationApp extends Application {
         reservationTable.setItems(reservations);
     }
 
+    private static TableColumn<Reservation, Integer> getCapacityColumn() {
+        TableColumn<Reservation, Integer> capacityColumn = new TableColumn<>("Capacity");
+        capacityColumn.setCellValueFactory(data -> data.getValue().getCapacityProperty().asObject());
+        capacityColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item));
+                }
+            }
+        });
+        return capacityColumn;
+    }
+
+    private static TableColumn<Reservation, Integer> getReservationIntegerTableColumn() {
+        TableColumn<Reservation, Integer> tableNumberColumn = new TableColumn<>("Table Number");
+        tableNumberColumn.setCellValueFactory(data -> data.getValue().getTableNumberProperty().asObject());
+        tableNumberColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item));
+                }
+            }
+        });
+        return tableNumberColumn;
+    }
+
     public void addReservation(String name, String time, int tableNumber, int capacity) {
 
         /* If reservations is null, it means that the list has not been initialized yet. In that case, the code initializes the reservations list by creating a new instance of ObservableList using FXCollections.observableArrayList().
@@ -143,20 +148,6 @@ public class ReservationApp extends Application {
 
         Reservation reservation = new Reservation(name, time, tableNumber, capacity);
         reservations.add(reservation);
-    }
-
-    public void setReservations(ObservableList<Object> observableArrayList) {
-        this.reservations = reservations;
-    }
-
-    public static TextField getTableNumberField() {
-        TextField tableNumberField = new TextField();
-        return tableNumberField;
-    }
-
-    public static TextField getCapacityField() {
-        TextField capacityField = new TextField();
-        return capacityField;
     }
 
     //the same method tested in the tests defined for the back end, to merge later in the merged package
