@@ -173,16 +173,6 @@ This mechanism ensures that tables are automatically unlocked after a reservatio
 
 ## Challenges: 
 
-In the implementation of the reservation system, I encountered challenges related to synchronization and delayed unlocking of reserved tables. To address these issues, I introduced a centralized time management system that ensures timely unlocking of tables based on reservation times. 
-
-#### Problem: Synchronization and Delayed Unlocking
-
-The initial approach relied on individual timers for each reservation, leading to synchronization problems and delayed unlocking of tables after reservations ended.
-
-#### Solution: Centralized Time Management System
-
-To overcome these challenges, I implemented a centralized time management system that consistently checks for unlock events at regular intervals and updates table availability based on reservation times.
-
 #### Problem : Unintended Interference of Food Orders Between Reservations in a Restaurant Reservation System:
 
 I faced an issue while developing the restaurant reservation system where food orders for one reservation were unintentionally affecting other reservations. The problem was initially attributed to data sharing among reservations.
@@ -258,16 +248,13 @@ For JSON serialization, I rely on Jackson's ObjectMapper, enabling me to convert
 ## 8. Deserialization (from JSON)
 I use Jackson's ObjectMapper for JSON deserialization, allowing me to parse JSON data back into objects within my application, ensuring seamless data retrieval.
 
-## 9. Resource Sharing (Between Threads)
-I manage resource sharing between threads using the `tableTimers` map, ensuring proper synchronization and preventing conflicts in concurrent operations.
-
-## 10. Test Hooks
+## 9. Test Hooks
 In my code, I incorporate test hooks for various testing purposes, including setup and teardown procedures, facilitating efficient and comprehensive testing.
 
-## 11. Graphical User Interface (JavaFX)
+## 10. Graphical User Interface (JavaFX)
 My application features a JavaFX graphical user interface, providing an interactive platform for users to interact with the system, enhancing user experience.
 
-## 12. Regular Expressions (Regex)
+## 11. Regular Expressions (Regex)
 I employ regular expressions to split and validate time (hours/minutes) input, ensuring accurate and reliable data processing.
 
 ---
