@@ -3,7 +3,7 @@ package merged;
 import back.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import javafx.animation.PauseTransition;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,12 +22,10 @@ import java.time.LocalTime;
 import java.util.*;
 
 
-public class MainMerged extends Application implements MainMergedHelper {
-    public ObservableList<Reservation> reservations = FXCollections.observableArrayList();
+public class MainMerged extends Application implements MainMergedHelper{
+    public ArrayList<Reservation> reservations = new ArrayList<>();
     private final ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    private final Map<Table, PauseTransition> tableTimers = new HashMap<Table, PauseTransition>(); // mapping each table with its timeline
 
     private TableView<ReservationDisplay> reservationTable; // Declare the reservationTable variable here
 
@@ -56,9 +54,6 @@ public class MainMerged extends Application implements MainMergedHelper {
     Button deleteButton = new Button("Delete Reservation");
 
     Button selectDishesButton = new Button("Select Dishes for Clients");
-
-    private final Timer centralTimer = new Timer();
-
 
     public static void main(String[] args) {
         launch(args);
@@ -92,6 +87,7 @@ public class MainMerged extends Application implements MainMergedHelper {
 
                 // Validate input values
                 validateInputValues(tableNumber, capacity, people, disabilitiesPeople);
+
 
                 if (tableNumber < 1 || capacity < 0 || people < 0 || disabilitiesPeople < 0) {
                     showInvalidInputAlert("enter other positive values ");
@@ -167,18 +163,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         });
 
         cleanButton.setOnAction(e -> {
-            // Cancel and remove associated PauseTransitions
-            for (Reservation reservation : reservations) {
-                PauseTransition tableTransition = tableTimers.get(reservation.getTable());
-                if (tableTransition != null) {
-                    tableTransition.stop();
-                    tableTimers.remove(reservation.getTable());
-                }
-            }
-
             cleanJsonAndReservations();
-
-
         });
 
 
@@ -247,15 +232,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         reservationTable.setId("reservationTable");
         selectDishesButton.setId("selectDish");
 
-        /* Set up a scheduled task using centralTimer to periodically run processUnlockEvents()
-         This task will execute every second (1000 milliseconds) to check for unlock events
-         */
-        centralTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                processUnlockEvents(); // Check and handle unlock events
-            }
-        }, 0, 1000); // Check every second for unlock events
     }
 
     private TableColumn<ReservationDisplay, Void> getReservationDisplayVoidTableColumn() {
@@ -432,22 +408,6 @@ public class MainMerged extends Application implements MainMergedHelper {
     }
 
 
-    private void processUnlockEvents() {
-        LocalTime currentTime = LocalTime.now(); //  used to retrieve the current local time based on the system clock.
-
-        // Iterate through all reservations to check for unlock events
-        for (Reservation reservation : reservations) {
-            // Check if the reservation's unlock time is before the current time and if it's still locked
-            if (reservation.getUnlockTime().isBefore(currentTime) && reservation.isLocked()) {
-                Table table = reservation.getTable();
-                // Set the table as available again and update its availability in JSON data
-                updateTableAvailability(table.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(table.getTableNumber())); // Unlock the table
-                reservation.setLocked(false); // Mark reservation as unlocked
-                serializeJsonFile(); // Save changes to JSON file
-            }
-        }
-    }
-
     public void loadReservedTables() {
         try {
             File file = new File("src/main/resources/tables.json");
@@ -517,13 +477,6 @@ public class MainMerged extends Application implements MainMergedHelper {
             if (reservation != null) {
                 reservations.remove(reservation);
                 reservationDisplays.remove(selectedReservation);
-
-                // Cancel the associated PauseTransition (if exists)
-                PauseTransition tableTransition = tableTimers.get(reservation.getTable());
-                if (tableTransition != null) {
-                    tableTransition.stop();
-                    tableTimers.remove(reservation.getTable());
-                }
                 updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
                 serializeJsonFile(); // Save changes to the JSON file
             }
@@ -657,26 +610,7 @@ public class MainMerged extends Application implements MainMergedHelper {
                 reservation.getTableNumber(),
                 reservation.getCapacity()
         ));
-        LocalTime arrivalTime = LocalTime.parse(reservation.getArrivalTime());
-        LocalTime unlockTime = arrivalTime.plusHours(2);
-
-        Duration timeUntilUnlock = calculateDuration(arrivalTime, unlockTime);
-
-    /* Created a PauseTransition to delay unlocking the table. This strategy has been chosen to keep synchronous updating of reservations
-    and their serialization into JSON, otherwise I could have used also a Timeline and keyframe! (async synchronization)
-    */
-        PauseTransition unlockTransition = new PauseTransition(timeUntilUnlock);
-        unlockTransition.setOnFinished(evt -> {
-            updateTableAvailability(reservation.getTableNumber(), String.valueOf(arrivalTime), String.valueOf(unlockTime), getCategoryForTable(tableNumber)); // Unlock the table
-            serializeJsonFile();
-        });
-        unlockTransition.play();
-
-        serializeJsonFile(); // Save changes to the JSON file
-
-        // Store the PauseTransition in the tableTimers map
-        tableTimers.put(reservation.getTable(), unlockTransition);
-
+        serializeJsonFile();
         clearInputFields();
     }
 
