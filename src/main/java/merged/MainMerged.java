@@ -29,8 +29,6 @@ public class MainMerged extends Application implements MainMergedHelper{
 
     private TableView<ReservationDisplay> reservationTable; // Declare the reservationTable variable here
 
-    private final ReservationSystem reservationSystem = new ReservationSystem();
-
     Label nameLabel = new Label("Name:");
     TextField nameField = new TextField();
 
@@ -290,7 +288,7 @@ public class MainMerged extends Application implements MainMergedHelper{
                     Button payButton = new Button("Pay");
                     payButton.setOnAction(event -> {
                         // Decrement the quantity of the item in the reservation's platesMap
-                        reservation.decrementPlateQuantity(plateName, 1); // Decrement by 1
+                        reservation.decrementPlateQuantity(plateName); // Decrement by 1
 
                         // Update the label text to reflect the decremented quantity
                         int updatedQuantity = reservation.getPlatesMap().getOrDefault(plateName, 0);
@@ -581,7 +579,7 @@ public class MainMerged extends Application implements MainMergedHelper{
     }
 
     public String calculateCategory(int people, int disabilitiesPeople) {
-        return reservationSystem.calculateCategory(people, disabilitiesPeople);
+        return ReservationSystem.calculateCategory(people, disabilitiesPeople);
     }
 
     public boolean validateTableCategory(int tableNumber, int capacity, String category) {

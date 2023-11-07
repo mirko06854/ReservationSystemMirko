@@ -22,11 +22,9 @@ public class Table {
      *
      * @param tableNumber The unique identifier for the table.
      * @param capacity    The maximum number of guests the table can accommodate.
-     * @param arrivalTime The time when guests can arrive at the table.
-     * @param leavingTime The time when guests must leave the table.
      * @throws IllegalArgumentException If table number or capacity is negative.
      */
-    public Table(int tableNumber, int capacity, String arrivalTime, String leavingTime) {
+    public Table(int tableNumber, int capacity) {
         if (tableNumber < 0 && capacity < 0) {
             throw new IllegalArgumentException("Table number and capacity cannot both be negative.");
         }

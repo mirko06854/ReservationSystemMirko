@@ -15,7 +15,6 @@ import java.util.List;
  */
 
 public class ReservationSystem {
-    private final List<Reservation> reservations;
     private final List<Reservation> tables;
 
     /**
@@ -23,19 +22,9 @@ public class ReservationSystem {
      * Initializes the list of reservations and reads table data from a JSON file.
      */
     public ReservationSystem() {
-        reservations = new ArrayList<>();
         tables = readReservationDataFromJson();
     }
 
-
-    private void removeReservation(Reservation reservation) {
-        if (reservations.remove(reservation)) {
-            updateTableAvailability(reservation.getTableNumber(), true);
-            System.out.println("Reservation removed: " + reservation);
-        } else {
-            System.out.println("Reservation not found: " + reservation);
-        }
-    }
 
     public boolean isTableAvailable(int tableNumber) {
         if (tables != null) {
@@ -48,15 +37,6 @@ public class ReservationSystem {
         return false; // Table not found, consider as unavailable
     }
 
-
-    private void updateTableAvailability(int tableNumber, boolean isAvailable) {
-        for (Reservation table : tables) {
-            if (table.getTableNumber() == tableNumber) {
-                table.setAvailable(isAvailable);
-                break;
-            }
-        }
-    }
 
     /**
      * Reads table data from a JSON file and initializes table availability.
@@ -78,9 +58,9 @@ public class ReservationSystem {
 
                 // Assign category based on table number
                 if (tableNumber >= 1 && tableNumber <= 5) {
-                    reservation.setCategory("Normal");
+                    reservation.setCategory();
                 } else if (tableNumber >= 6 && tableNumber <= 10) {
-                    reservation.setCategory("Special Needs");
+                    reservation.setCategory();
                 }
             }
 
@@ -98,7 +78,7 @@ public class ReservationSystem {
         }
     }
 
-    public String calculateCategory(int normalPeople, int disabilitiesPeople) {
+    public static String calculateCategory(int normalPeople, int disabilitiesPeople) {
         if (disabilitiesPeople >= normalPeople) {
             return "Special Needs";
         } else {

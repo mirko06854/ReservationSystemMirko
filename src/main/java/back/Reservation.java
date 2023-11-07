@@ -6,9 +6,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * The `Reservation` class represents a reservation for a table at a restaurant.
@@ -21,12 +21,20 @@ public class Reservation {
     private final String leavingTime;
     private final Table table;
 
-    private String category;
-
-    private final LocalTime unlockTime; // New field for unlock time
-    private boolean locked; // New field for locked status
-
     private Map<String, Integer> platesMap;
+
+    /* Logic for the category being setted. Since I have tables that have maximum 5 sitting places for just one category, whereas for the other tha max is 3, I want to assign random values, with a range from 1 to 5, and I add
+    the restriction that the sum of the people must be <=5
+     */
+
+    private int max = 5;
+    private int min = 1;
+    int range = (max - min) + 1;
+    int disabilitiesPeople = (int)(Math.random() * range) + min;
+    int normalPeople = (int)(Math.random() * range) + min;
+
+    int sumOfPeople = 5;
+
 
     /**
      * Creates a new reservation with the specified name, arrival time, table number, and capacity.
@@ -42,11 +50,8 @@ public class Reservation {
         this.arrivalTime = arrivalTime;
         // Calculate leaving time as 2 hours after arrival time
         this.leavingTime = calculateLeavingTime(arrivalTime);
-        this.table = new Table(tableNumber, capacity, arrivalTime, leavingTime);
+        this.table = new Table(tableNumber, capacity);
 
-        // Calculate unlock time as 1 minute after leaving time (adjust as needed)
-        this.unlockTime = LocalTime.parse(leavingTime).plusMinutes(1);
-        this.locked = true; // Mark reservation as locked initially
         this.platesMap = new HashMap<>(); // Initialize the list of plates, this what the problem when the reservation's orders couldn't be attached.
     }
 
@@ -122,29 +127,6 @@ public class Reservation {
         return String.format("%02d:%02d", departureHours, minutes);
     }
 
-    /**
-     * Sets the category of the reservation.
-     *
-     * @param category The category to set for the reservation.
-     */
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    @JsonIgnore
-    public LocalTime getUnlockTime() {
-        return unlockTime;
-    }
-
-    @JsonIgnore
-    public boolean isLocked() {
-        return locked;
-    }
-
-    @JsonIgnore
-    public void setLocked(boolean locked) {
-        this.locked = locked;
-    }
 
     /**
      * Sets the plates map for the reservation, indicating the ordered plates and quantities.
@@ -172,15 +154,28 @@ public class Reservation {
      * Decrements the quantity of a specific plate in the reservation's plates map.
      *
      * @param plateName The name of the plate to decrement.
-     * @param i         The quantity to decrement by.
      */
-    public void decrementPlateQuantity(String plateName, int i) {
+    public void decrementPlateQuantity(String plateName) {
         if (platesMap.containsKey(plateName)) {
             int currentQuantity = platesMap.get(plateName);
             if (currentQuantity > 0) {
                 platesMap.put(plateName, currentQuantity - 1);
             }
         }
+    }
+
+    public StringBuilder setCategory() {
+        StringBuilder x = new StringBuilder();
+        while (disabilitiesPeople + normalPeople <= sumOfPeople) {
+            if (disabilitiesPeople >= normalPeople) {
+                x.append("Special Needs");
+
+            } else {
+                x.append("Normal");
+
+            }
+        }
+        return x;
     }
 
 }

@@ -34,7 +34,7 @@ public class MainTest {
 
     @Test
     public void testSerializationDeserialization() throws IOException {
-        Table originalTable = new Table(1, 4, "21:30", "23:30");
+        Table originalTable = new Table(1, 4);
         originalTable.setAvailable(true);
 
         objectMapper.writeValue(tempFile, originalTable);
@@ -48,17 +48,17 @@ public class MainTest {
 
     @Test
     public void testNegativeCapacity() {
-        assertThrows(IllegalArgumentException.class, () -> new Table(1, -4, "21:30", "23:30"));
+        assertThrows(IllegalArgumentException.class, () -> new Table(1, -4));
     }
 
     @Test
     public void testNegativeTableNumber() {
-        assertThrows(IllegalArgumentException.class, () -> new Table(-1, 4, "21:30", "23:30"));
+        assertThrows(IllegalArgumentException.class, () -> new Table(-1, 4));
     }
 
     @Test
     public void testBothNegativeCapacityAndNegativeTableNumber() {
-        assertThrows(IllegalArgumentException.class, () -> new Table(-1, -4, "21:30", "23:30"));
+        assertThrows(IllegalArgumentException.class, () -> new Table(-1, -4));
     }
 
 

@@ -26,6 +26,11 @@
             </configuration>
         </plugin>
     </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
     </build>
 
     <dependencies>
@@ -43,7 +48,7 @@
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
-            <version>4.0.16-alpha</version>
+            <version>4.0.17</version>
         </dependency>
         <dependency>
         <groupId>org.openjfx</groupId>
@@ -77,6 +82,11 @@
             <artifactId>junit-jupiter</artifactId>
             <version>5.9.2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>22-ea+16</version>
         </dependency>
     </dependencies>
 

@@ -16,7 +16,7 @@ public class Main {
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Create a new back.Table instance
-        Table table = new Table(3, 4, "21:30", "23:30");
+        Table table = new Table(3, 4);
 
         try {
             // Serialize the Table object to JSON and write it to a file

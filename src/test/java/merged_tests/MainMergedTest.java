@@ -1,7 +1,9 @@
 package merged_tests;
 
+import javafx.embed.swing.JFXPanel;
 import javafx.util.Duration;
 import merged.MainMerged;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,6 +23,12 @@ public class MainMergedTest extends ApplicationTest {
      * Test the {@link MainMerged#calculateArrivalTime(String)} method.
      * It verifies that the method correctly calculates the arrival time based on the given input time.
      */
+
+    @BeforeAll
+    public static void initJavaFX() {
+        System.setProperty("javafx.headless", "true");
+        new JFXPanel(); // Initializes JavaFX environment
+    }
     @Test
     public void calculateArrivalTimeTest() {
         // Given
