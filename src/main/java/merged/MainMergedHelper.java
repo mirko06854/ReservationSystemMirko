@@ -1,13 +1,7 @@
 package merged;
 
 import back.Reservation;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import javafx.animation.PauseTransition;
-import javafx.scene.control.Alert;
 import javafx.util.Duration;
-
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalTime;
 
 /**
@@ -30,7 +24,7 @@ public interface MainMergedHelper {
      */
     Reservation findReservation(ReservationDisplay selectedReservation);
 
-    boolean updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory);
+    void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory);
 
     void serializeJsonFile();
 
@@ -58,14 +52,6 @@ public interface MainMergedHelper {
     String getCategoryForTable(int tableNumber);
 
     // boolean isReservationConflicting(Reservation newReservation);
-
-    /**
-     * Retrieves the last departure time for a given table number.
-     *
-     * @param tableNumber The table number to retrieve the last departure time for.
-     * @return The last departure time for the table.
-     */
-    LocalTime getLastDepartureTimeForTable(int tableNumber);
 
     void validateInputValues(int tableNumber, int capacity, int people, int disabilitiesPeople);
 

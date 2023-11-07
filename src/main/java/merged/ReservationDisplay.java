@@ -7,12 +7,13 @@ import javafx.beans.property.*;
  * Therefore, to manage this issue, I created this separate class for displaying reservations in the table.
  **/
 
+@SuppressWarnings("unused")
 public class ReservationDisplay {
-    private StringProperty name;
-    private StringProperty time;
-    private IntegerProperty tableNumber;
-    private IntegerProperty capacity;
-    private IntegerProperty remainingTime;
+    private final StringProperty name;
+    private final StringProperty time;
+    private final IntegerProperty tableNumber;
+    private final IntegerProperty capacity;
+    private final IntegerProperty remainingTime;
 
     public ReservationDisplay(String name, String time, int tableNumber, int capacity) {
         this.name = new SimpleStringProperty(name);
@@ -22,6 +23,10 @@ public class ReservationDisplay {
         this.remainingTime = new SimpleIntegerProperty(); // remaining time
     }
 
+    /* Note: this may seem unused code but actually it is used to view the name, time, table number of reserved table in the GUI.
+    If I delete it, I will have in each respective cell "SimpleStringProperty", "SimpleIntegerProperty"
+    and so on, so I suppressed such warnings using the tag @SuppressWarnings at the start from the class.
+     */
     public StringProperty nameProperty() {
         return name;
     }

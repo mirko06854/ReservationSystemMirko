@@ -24,14 +24,14 @@ import java.util.*;
 
 public class MainMerged extends Application implements MainMergedHelper {
     public ObservableList<Reservation> reservations = FXCollections.observableArrayList();
-    private ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private Map<Table, PauseTransition> tableTimers = new HashMap<Table, PauseTransition>(); // mapping each table with its timeline
+    private final Map<Table, PauseTransition> tableTimers = new HashMap<Table, PauseTransition>(); // mapping each table with its timeline
 
     private TableView<ReservationDisplay> reservationTable; // Declare the reservationTable variable here
 
-    private ReservationSystem reservationSystem = new ReservationSystem();
+    private final ReservationSystem reservationSystem = new ReservationSystem();
 
     Label nameLabel = new Label("Name:");
     TextField nameField = new TextField();
@@ -57,7 +57,7 @@ public class MainMerged extends Application implements MainMergedHelper {
 
     Button selectDishesButton = new Button("Select Dishes for Clients");
 
-    private Timer centralTimer = new Timer();
+    private final Timer centralTimer = new Timer();
 
 
     public static void main(String[] args) {
@@ -129,15 +129,10 @@ public class MainMerged extends Application implements MainMergedHelper {
                     return;
                 }
 
-                // Get the most recent departure time for the selected table
-                LocalTime lastDepartureTime = getLastDepartureTimeForTable(tableNumber);
-
                 // Calculate new arrival and departure times
                 LocalTime newArrivalTime = calculateArrivalTime(time);
                 LocalTime newDepartureTime = newArrivalTime.plusHours(2);
-
-                // Calculate the unlock time based on the last departure time
-                LocalTime unlockTime = lastDepartureTime.plusMinutes(1); // Add a small buffer
+                
 
                 // Check if new reservation overlaps with existing reservations
                 if (isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime)) {
@@ -218,33 +213,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
 
         // Add a new button column to the reservation table
-        TableColumn<ReservationDisplay, Void> viewFoodColumn = new TableColumn<>("View Food");
-        viewFoodColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button viewFoodButton = new Button("View Food");
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(viewFoodButton);
-
-                    // Get the selected reservation for this row
-                    ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
-                    Reservation reservation = findReservation(reservationDisplay);
-                    // Handle button click event
-                    viewFoodButton.setOnAction(event -> {
-                        if (reservation != null) {
-                            Map<String, Integer> orderedPlatesMap = reservation.getPlatesMap();
-                            // Display ordered plates
-                            showOrderedFoodDialog(reservation, reservationDisplay);
-                        }
-                    });
-                }
-            }
-        });
+        TableColumn<ReservationDisplay, Void> viewFoodColumn = getReservationDisplayVoidTableColumn();
 
 
         reservationTable = new TableView<>();
@@ -254,11 +223,8 @@ public class MainMerged extends Application implements MainMergedHelper {
 
         // Add a listener to enable/disable the "Select Dishes for Clients" button based on row selection
         reservationTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                selectDishesButton.setDisable(false); // Enable the button when a row is selected
-            } else {
-                selectDishesButton.setDisable(true); // Disable the button when no row is selected
-            }
+            // Disable the button when no row is selected
+            selectDishesButton.setDisable(newSelection == null); // Enable the button when a row is selected
         });
 
         layout = new VBox(10);
@@ -290,6 +256,36 @@ public class MainMerged extends Application implements MainMergedHelper {
                 processUnlockEvents(); // Check and handle unlock events
             }
         }, 0, 1000); // Check every second for unlock events
+    }
+
+    private TableColumn<ReservationDisplay, Void> getReservationDisplayVoidTableColumn() {
+        TableColumn<ReservationDisplay, Void> viewFoodColumn = new TableColumn<>("View Food");
+        viewFoodColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button viewFoodButton = new Button("View Food");
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(viewFoodButton);
+
+                    // Get the selected reservation for this row
+                    ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
+                    Reservation reservation = findReservation(reservationDisplay);
+                    // Handle button click event
+                    viewFoodButton.setOnAction(event -> {
+                        if (reservation != null) {
+                            // Display ordered plates
+                            showOrderedFoodDialog(reservation, reservationDisplay);
+                        }
+                    });
+                }
+            }
+        });
+        return viewFoodColumn;
     }
 
     public void showOrderedFoodDialog(Reservation reservation, ReservationDisplay selectedReservation) {
@@ -486,7 +482,7 @@ public class MainMerged extends Application implements MainMergedHelper {
         return null;
     }
 
-    public boolean updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory) {
+    public void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory) {
         for (Reservation reservation : reservations) {
             if (reservation.getTableNumber() == tableNumber) {
                 LocalTime existingArrivalTime = LocalTime.parse(reservation.getArrivalTime());
@@ -498,11 +494,10 @@ public class MainMerged extends Application implements MainMergedHelper {
                 // Check if new reservation overlaps with an existing reservation
                 if ((newResArrivalTime.isBefore(existingLeavingTime) && newResLeavingTime.isAfter(existingArrivalTime)) ||
                         (newResLeavingTime.isAfter(existingArrivalTime) && newResArrivalTime.isBefore(existingLeavingTime))) {
-                    return false; // New reservation overlaps with an existing reservation
+                    return; // New reservation overlaps with an existing reservation
                 }
             }
         }
-        return true; // Table is available
     }
 
     public void serializeJsonFile() {
@@ -567,19 +562,6 @@ public class MainMerged extends Application implements MainMergedHelper {
         } else {
             return "Unknown"; // Or whatever default category you want for invalid table numbers
         }
-    }
-
-    public LocalTime getLastDepartureTimeForTable(int tableNumber) {
-        LocalTime lastDepartureTime = LocalTime.MIN;
-        for (Reservation reservation : reservations) {
-            if (reservation.getTableNumber() == tableNumber) {
-                LocalTime departureTime = LocalTime.parse(reservation.getLeavingTime());
-                if (departureTime.isAfter(lastDepartureTime)) {
-                    lastDepartureTime = departureTime;
-                }
-            }
-        }
-        return lastDepartureTime;
     }
 
     public void validateInputValues(int tableNumber, int capacity, int people, int disabilitiesPeople) {
