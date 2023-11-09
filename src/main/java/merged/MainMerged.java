@@ -38,9 +38,6 @@ public class MainMerged extends Application implements MainMergedHelper{
     Label tableNumberLabel = new Label("Table Number:");
     TextField tableNumberField = new TextField();
 
-    Label capacityLabel = new Label("Capacity:");
-    TextField capacityField = new TextField();
-
     Label peopleNumberLabel = new Label("people:");
     TextField peopleNumberField = new TextField();
 
@@ -75,7 +72,6 @@ public class MainMerged extends Application implements MainMergedHelper{
                 String name = nameField.getText();
                 String time = timeField.getText();
                 int tableNumber = Integer.parseInt(tableNumberField.getText());
-                int capacity = Integer.parseInt(capacityField.getText());
                 int people = Integer.parseInt(peopleNumberField.getText());
                 int disabilitiesPeople = Integer.parseInt(disabilitiesPeopleNumberField.getText());
                 int totalPeople = people + disabilitiesPeople;
@@ -84,10 +80,15 @@ public class MainMerged extends Application implements MainMergedHelper{
                 String category = calculateCategory(people, disabilitiesPeople);
 
                 // Validate input values
-                validateInputValues(tableNumber, capacity, people, disabilitiesPeople);
+                validateInputValues(tableNumber, people, disabilitiesPeople);
 
+                // Validate input values
+                if (totalPeople > 5) {
+                    showInvalidInputAlert("Number of people and disabilities exceeds the table capacity (5).");
+                    return;
+                }
 
-                if (tableNumber < 1 || capacity < 0 || people < 0 || disabilitiesPeople < 0) {
+                if (tableNumber < 1 || people < 0 || disabilitiesPeople < 0) {
                     showInvalidInputAlert("enter other positive values ");
                     return; // Exit the method without proceeding further
                 }
@@ -97,25 +98,17 @@ public class MainMerged extends Application implements MainMergedHelper{
                     return; // Exit the method without proceeding further
                 }
 
-                if (category.equals("Normal") && (capacity > 5 || capacity < totalPeople)) {
-                    showInvalidInputAlert("For tables with category 'Normal', the capacity should be the sum of people , and that must be max 5");
-                    return; // Exit the method without proceeding further
-                }
-
-                if (category.equals("Special Needs") && (capacity < 3 || capacity < totalPeople)) {
+                if (category.equals("Special Needs") && (totalPeople > 3)) {
                     showInvalidInputAlert("For tables with category 'Special Needs', the capacity should be the sum of people , and that must be max 3");
+                    if (disabilitiesPeople == 5) {
+                        showRecommendation(); // Suggest to add such group to two tables with category = special needs.
+                    }
                     return; // Exit the method without proceeding further
                 }
 
                 // Check if the sum of people is greater than 3 and at least 3 are people with disabilities
-                if (totalPeople > 3 && disabilitiesPeople >= 3) {
+                if (totalPeople > 3 && disabilitiesPeople < people) {
                     category = "Normal"; // Set category to "Normal" in this special case
-                }
-
-                // If we have 5 people with Special Needs we wish to split such people in their own tables.
-                if (totalPeople > 3 && disabilitiesPeople == 5) {
-                    showRecommendation(); // Suggest to add such group to another table.
-                    return;
                 }
 
                 if (!isValidTimeFormat(time)) {
@@ -126,7 +119,7 @@ public class MainMerged extends Application implements MainMergedHelper{
                 // Calculate new arrival and departure times
                 LocalTime newArrivalTime = calculateArrivalTime(time);
                 LocalTime newDepartureTime = newArrivalTime.plusHours(2);
-                
+
 
                 // Check if new reservation overlaps with existing reservations
                 if (isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime)) {
@@ -140,15 +133,15 @@ public class MainMerged extends Application implements MainMergedHelper{
                 ReservationSystem.validateTableBookingTime(time);
 
                 // validates the category and check if it matches the table
-                validateTableCategory(tableNumber, capacity, category);
+                validateTableCategory(tableNumber, totalPeople, category);
 
                 // Validate category and capacity
-                if (!validateTableCategory(tableNumber, capacity, category)) {
+                if (!validateTableCategory(tableNumber, totalPeople, category)) {
                     return; // Exit the method without adding the reservation
                 }
 
                 // Create and store the reservation
-                addReservation(name, time, tableNumber, capacity);
+                addReservation(name, time, tableNumber, totalPeople);
 
                 // Clear input fields
                 clearInputFields();
@@ -192,16 +185,13 @@ public class MainMerged extends Application implements MainMergedHelper{
         TableColumn<ReservationDisplay, Integer> tableNumberColumn = new TableColumn<>("Table Number");
         tableNumberColumn.setCellValueFactory(new PropertyValueFactory<>("tableNumber"));
 
-        TableColumn<ReservationDisplay, Integer> capacityColumn = new TableColumn<>("Capacity");
-        capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
-
         // Add a new button column to the reservation table
         TableColumn<ReservationDisplay, Void> viewFoodColumn = getReservationDisplayVoidTableColumn();
 
 
         reservationTable = new TableView<>();
         reservationTable.setId("reservationTable");
-        reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, capacityColumn, viewFoodColumn);
+        reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, viewFoodColumn);
         reservationTable.setItems(reservationDisplays);
 
         // Add a listener to enable/disable the "Select Dishes for Clients" button based on row selection
@@ -211,7 +201,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         });
 
         layout = new VBox(10);
-        layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, capacityLabel, capacityField, peopleNumberLabel, peopleNumberField,
+        layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, peopleNumberLabel, peopleNumberField,
                 disabilitiesPeopleNumberLabel, disabilitiesPeopleNumberField, reserveButton, deleteButton, cleanButton, reservationTable, selectDishesButton);
         layout.setPadding(new Insets(10));
         scene = new Scene(layout, 400, 400);
@@ -223,7 +213,6 @@ public class MainMerged extends Application implements MainMergedHelper{
         nameField.setId("nameField");
         timeField.setId("timeField");
         tableNumberField.setId("tableNumberField");
-        capacityField.setId("capacityField");
         reserveButton.setId("reserveButton");
         cleanButton.setId("cleanButton");
         deleteButton.setId("deleteButton");
@@ -300,7 +289,7 @@ public class MainMerged extends Application implements MainMergedHelper{
 
                             // Check if all plates have been paid
                             if (areAllPlatesPaid(reservation)) {
-                               deleteEachReservation();
+                                deleteEachReservation();
                             }
                         }
                     });
@@ -515,8 +504,8 @@ public class MainMerged extends Application implements MainMergedHelper{
         }
     }
 
-    public void validateInputValues(int tableNumber, int capacity, int people, int disabilitiesPeople) {
-        if (tableNumber < 1 || capacity < 0 || people < 0 || disabilitiesPeople < 0) {
+    public void validateInputValues(int tableNumber, int people, int disabilitiesPeople) {
+        if (tableNumber < 1 || people < 0 || disabilitiesPeople < 0) {
             showInvalidInputAlert("Invalid input values. Please enter positive values for all fields.");
         }
     }
@@ -586,7 +575,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         String selectedTableCategory = getCategoryForTable(tableNumber);
         int calculatedCapacity = Integer.parseInt(peopleNumberField.getText()) + Integer.parseInt(disabilitiesPeopleNumberField.getText());
 
-        if (!category.equals(selectedTableCategory) || capacity != calculatedCapacity) {
+        if (!category.equals(selectedTableCategory) || capacity < calculatedCapacity) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Table Capacity or Category Mismatch");
             alert.setHeaderText("Table Capacity or Category Mismatch");
@@ -616,7 +605,6 @@ public class MainMerged extends Application implements MainMergedHelper{
         nameField.clear();
         timeField.clear();
         tableNumberField.clear();
-        capacityField.clear();
     }
 
     public void showInvalidNumberAlert() {
