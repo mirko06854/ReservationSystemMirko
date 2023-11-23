@@ -18,8 +18,11 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import javafx.stage.Modality;
+import back.ReservationCalendar;
 
 
 public class MainMerged extends Application implements MainMergedHelper{
@@ -49,6 +52,17 @@ public class MainMerged extends Application implements MainMergedHelper{
     Button deleteButton = new Button("Delete Reservation");
 
     Button selectDishesButton = new Button("Select Dishes for Clients");
+
+    Button backToCalendarPopUpButton = new Button("Select day");
+
+    private ReservationCalendar reservationCalendar;
+
+    private Stage primaryStage;
+
+
+    public MainMerged() {
+        this.reservationCalendar = reservationCalendar;
+    }
 
     public static void main(String[] args) {
         launch(args);
@@ -174,6 +188,21 @@ public class MainMerged extends Application implements MainMergedHelper{
             }
         });
 
+        backToCalendarPopUpButton.setOnAction(event -> {
+            // Chiamato quando il pulsante "Back to Calendar" viene premuto
+
+            // Crea un nuovo Stage per il popup di selezione della data
+            Stage calendarPopup = new Stage();
+            calendarPopup.initModality(Modality.APPLICATION_MODAL);
+            calendarPopup.setTitle("Select Date");
+
+            // Creare un'istanza di ReservationCalendar e mostrarla nel nuovo Stage
+            ReservationCalendar reservationCalendar = new ReservationCalendar(this);
+            reservationCalendar.start(calendarPopup);
+
+            calendarPopup.showAndWait();
+        });
+
 
         loadReservedTables();
         TableColumn<ReservationDisplay, String> nameColumn = new TableColumn<>("Name");
@@ -188,7 +217,6 @@ public class MainMerged extends Application implements MainMergedHelper{
         // Add a new button column to the reservation table
         TableColumn<ReservationDisplay, Void> viewFoodColumn = getReservationDisplayVoidTableColumn();
 
-
         reservationTable = new TableView<>();
         reservationTable.setId("reservationTable");
         reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, viewFoodColumn);
@@ -202,7 +230,7 @@ public class MainMerged extends Application implements MainMergedHelper{
 
         layout = new VBox(10);
         layout.getChildren().addAll(nameLabel, nameField, timeLabel, timeField, tableNumberLabel, tableNumberField, peopleNumberLabel, peopleNumberField,
-                disabilitiesPeopleNumberLabel, disabilitiesPeopleNumberField, reserveButton, deleteButton, cleanButton, reservationTable, selectDishesButton);
+                disabilitiesPeopleNumberLabel, disabilitiesPeopleNumberField, reserveButton, deleteButton, cleanButton, reservationTable, selectDishesButton,backToCalendarPopUpButton);
         layout.setPadding(new Insets(10));
         scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
@@ -218,6 +246,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         deleteButton.setId("deleteButton");
         reservationTable.setId("reservationTable");
         selectDishesButton.setId("selectDish");
+        backToCalendarPopUpButton.setId("backButton");
 
     }
 
@@ -622,4 +651,8 @@ public class MainMerged extends Application implements MainMergedHelper{
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+  //  public void showMainMerged(LocalDate selectedDate) {
+  //      primaryStage.show();
+  //  }
 }

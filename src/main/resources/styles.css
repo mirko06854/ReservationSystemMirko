@@ -15,3 +15,8 @@
 .calendar-grid {
     -fx-font-size: 25px;
 }
+
+.selected-day {
+    -fx-background-color: green;
+}
+

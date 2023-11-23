@@ -1,5 +1,6 @@
 package back;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,6 +14,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.util.Duration;
+import merged.*;
+import javafx.util.Callback;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 
 /**
@@ -20,11 +29,26 @@ import java.time.format.DateTimeFormatter;
  * It extends the Application class, providing the entry point for the JavaFX application lifecycle.
  */
 public class ReservationCalendar extends Application {
+
+    private List<Integer> selectedDays = new ArrayList<>();
+
     // Instance variable to store the current date
     private LocalDate currentDate = LocalDate.now();
+    private MainMerged mainMerged;
+
+    public ReservationCalendar(MainMerged mainMerged) {
+        this.mainMerged = mainMerged;
+    }
+
+    private ObjectProperty<Callback<LocalDate, Void>> onCalendarDaySelectedProperty = new SimpleObjectProperty<>();
+
+    // Create a grid to represent the calendar
+    GridPane calendarGrid = new GridPane();
+
 
     /**
      * The main method to launch the ReservationCalendar JavaFX application.
+     *
      * @param args Command-line arguments
      */
     public static void main(String[] args) {
@@ -34,6 +58,7 @@ public class ReservationCalendar extends Application {
     /**
      * Override of the start method from the Application class.
      * This method sets up the primary stage and constructs the user interface.
+     *
      * @param primaryStage The primary stage for the application
      */
     @Override
@@ -44,8 +69,6 @@ public class ReservationCalendar extends Application {
         // Create the root BorderPane that will hold the main layout
         BorderPane root = new BorderPane();
 
-        // Create a grid to represent the calendar
-        GridPane calendarGrid = new GridPane();
         calendarGrid.getStyleClass().add("calendar-grid");
         calendarGrid.setHgap(10);
         calendarGrid.setVgap(10);
@@ -107,7 +130,23 @@ public class ReservationCalendar extends Application {
     }
 
     /**
+     * Update the label to display the current month and year.
+     *
+     * @param monthYearLabel The Label displaying the month and year
+     */
+    private void updateMonthYearLabel(Label monthYearLabel) {
+        // Format the current date to display the month and year
+        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+        monthYearLabel.setText(formattedDate);
+    }
+
+    public void setOnCalendarDaySelected(Callback<LocalDate, Void> callback) {
+        onCalendarDaySelectedProperty.set(callback);
+    }
+
+    /**
      * Update the calendar grid based on the current date.
+     *
      * @param calendarGrid The GridPane representing the calendar
      */
     private void updateCalendar(GridPane calendarGrid) {
@@ -124,17 +163,22 @@ public class ReservationCalendar extends Application {
             LocalDate currentDay = firstDayOfMonth.plusDays(i);
 
             // Attach an event handler to the button to handle day selection
+            dayButton.setOnAction(event -> handleDaySelection(dayButton, currentDay));
             calendarGrid.add(dayButton, currentDay.getDayOfWeek().getValue() - 1, (i + firstDayOfMonth.getDayOfWeek().getValue() - 1) / 7);
         }
     }
 
-    /**
-     * Update the label to display the current month and year.
-     * @param monthYearLabel The Label displaying the month and year
-     */
-    private void updateMonthYearLabel(Label monthYearLabel) {
-        // Format the current date to display the month and year
-        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
-        monthYearLabel.setText(formattedDate);
+    private void handleDaySelection(Button dayButton, LocalDate currentDay) {
+        // Change colour of the day selected
+        dayButton.setStyle("-fx-background-color: lightgreen");
+
+        // Add some seconds before closing the calendar after having selected the day to check which day we have selected
+        PauseTransition delay = new PauseTransition(Duration.seconds(2));
+        delay.setOnFinished(event -> {
+            // closes the calendar pop up
+            Stage stage = (Stage) dayButton.getScene().getWindow();
+            stage.close();
+        });
+        delay.play();
     }
 }
