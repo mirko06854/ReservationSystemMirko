@@ -258,6 +258,11 @@ My application features a JavaFX graphical user interface, providing an interact
 I employ regular expressions to split and validate time (hours/minutes) input, ensuring accurate and reliable data processing.
 
 ---
+## New Calendar ideas:
+
+I have implemented a new calendar in the "back" package, accessible by setting the source in the .pom file to "back/ReservationCalendar" at line 25 within the <mainClass></mainClass> tags. The concept behind this implementation is that upon clicking each day, the GUI from the "main_merged" package will open, allowing users to reserve a table for the selected day. Moreover, the system is designed so that when changing days and returning to the previously selected day, the reservation will still be retained.
+
+
 
 ## Learning outcomes:
 

@@ -1,0 +1,17 @@
+.root {
+    -fx-font-size: 14px;
+}
+
+.month-year-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.nav-button {
+    -fx-font-size: 14px;
+    -fx-padding: 5 10;
+}
+
+.calendar-grid {
+    -fx-font-size: 25px;
+}
