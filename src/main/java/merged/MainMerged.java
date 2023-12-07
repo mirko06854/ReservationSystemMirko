@@ -18,7 +18,6 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import javafx.stage.Modality;
@@ -58,6 +57,8 @@ public class MainMerged extends Application implements MainMergedHelper{
 
     private Stage primaryStage;
 
+    // Create the new Stage for the selection of date
+    private Stage calendarPopup;
 
     public MainMerged() {
         this.reservationCalendar = reservationCalendar;
@@ -187,19 +188,16 @@ public class MainMerged extends Application implements MainMergedHelper{
             }
         });
 
+        // Called when the button "Select Day" is pressed
         backToCalendarPopUpButton.setOnAction(event -> {
-            // Chiamato quando il pulsante "Back to Calendar" viene premuto
 
-            // Crea un nuovo Stage per il popup di selezione della data
-            Stage calendarPopup = new Stage();
+            calendarPopup = new Stage();
             calendarPopup.initModality(Modality.APPLICATION_MODAL);
             calendarPopup.setTitle("Select Date");
 
             // Creare un'istanza di ReservationCalendar e mostrarla nel nuovo Stage
             ReservationCalendar reservationCalendar = new ReservationCalendar(this);
             reservationCalendar.start(calendarPopup);
-
-            calendarPopup.showAndWait();
         });
 
 
