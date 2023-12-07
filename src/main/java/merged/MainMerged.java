@@ -22,7 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import javafx.stage.Modality;
-import back.ReservationCalendar;
 
 
 public class MainMerged extends Application implements MainMergedHelper{
@@ -30,7 +29,7 @@ public class MainMerged extends Application implements MainMergedHelper{
     private final ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private TableView<ReservationDisplay> reservationTable; // Declare the reservationTable variable here
+    private TableView<ReservationDisplay> reservationTable;
 
     Label nameLabel = new Label("Name:");
     TextField nameField = new TextField();
@@ -650,6 +649,26 @@ public class MainMerged extends Application implements MainMergedHelper{
         alert.setHeaderText("Invalid input values");
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+     public void updateReservationsDisplay(List<Reservation> reservations) {
+        // Clear the existing items in the reservationDisplays list
+        reservationDisplays.clear();
+
+        // Add the new reservations to the reservationDisplays list
+        if (reservations != null) {
+            for (Reservation reservation : reservations) {
+                reservationDisplays.add(new ReservationDisplay(
+                        reservation.getName(),
+                        reservation.getArrivalTime(),
+                        reservation.getTableNumber(),
+                        reservation.getCapacity()
+                ));
+            }
+        }
+
+        // Refresh the items in the reservationTable
+        reservationTable.refresh();
     }
 
   //  public void showMainMerged(LocalDate selectedDate) {

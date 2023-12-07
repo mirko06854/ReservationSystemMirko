@@ -15,7 +15,9 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.util.Duration;
 import merged.*;
@@ -30,11 +32,14 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public class ReservationCalendar extends Application {
 
-    private List<Integer> selectedDays = new ArrayList<>();
-
     // Instance variable to store the current date
     private LocalDate currentDate = LocalDate.now();
+
+    private Reservation reservation;
     private MainMerged mainMerged;
+    private Map<LocalDate, List<Reservation>> reservationsMap = new HashMap<>();
+    private LocalDate selectedDate;
+    private List<Reservation> reservations;
 
     public ReservationCalendar(MainMerged mainMerged) {
         this.mainMerged = mainMerged;
@@ -169,6 +174,10 @@ public class ReservationCalendar extends Application {
     }
 
     private void handleDaySelection(Button dayButton, LocalDate currentDay) {
+
+        // Aggiorna la visualizzazione delle prenotazioni sulla GUI per la data selezionata
+        reservations = reservationsMap.get(selectedDate);
+
         // Change colour of the day selected
         dayButton.setStyle("-fx-background-color: lightgreen");
 
@@ -178,7 +187,9 @@ public class ReservationCalendar extends Application {
             // closes the calendar pop up
             Stage stage = (Stage) dayButton.getScene().getWindow();
             stage.close();
+           
         });
         delay.play();
+         mainMerged.updateReservationsDisplay(reservations);
     }
 }
