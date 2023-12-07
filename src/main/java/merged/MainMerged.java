@@ -653,7 +653,7 @@ public class MainMerged extends Application implements MainMergedHelper{
 
      public void updateReservationsDisplay(List<Reservation> reservations) {
         // Clear the existing items in the reservationDisplays list
-        reservationDisplays.clear();
+        cleanJsonAndReservations();
 
         // Add the new reservations to the reservationDisplays list
         if (reservations != null) {
@@ -666,9 +666,6 @@ public class MainMerged extends Application implements MainMergedHelper{
                 ));
             }
         }
-
-        // Refresh the items in the reservationTable
-        reservationTable.refresh();
     }
 
   //  public void showMainMerged(LocalDate selectedDate) {
