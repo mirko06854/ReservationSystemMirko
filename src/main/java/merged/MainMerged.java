@@ -190,7 +190,6 @@ public class MainMerged extends Application implements MainMergedHelper{
 
         // Called when the button "Select Day" is pressed
         backToCalendarPopUpButton.setOnAction(event -> {
-
             calendarPopup = new Stage();
             calendarPopup.initModality(Modality.APPLICATION_MODAL);
             calendarPopup.setTitle("Select Date");

@@ -37,6 +37,10 @@ To delete a reservation, locate the "Delete" button. Click this button to remove
 
 You can clean all reservations at once by using the "Clean All Reservations" button. This action clears all reservations from the app.
 
+### Calendar:
+
+To open the calendar, just press the button "Select Day", and you can select the day to add reservations. The day selected will become green and after one second the calendar will be closed. I choose to put a colour when the button is pressed to show the ResturantManager the day pressed.
+
 ---
 
 ## Structure:
@@ -220,6 +224,32 @@ this.platesMap = platesMap;
 
 which didn't initialise anything.
 
+#### Problem : In terminal I had an ambiguous warning with written "Stage already visible". It was difficult to understand which was the reason. This warning was shown every time I pressed "Select Day" button, In the end I came up with it and the problem was the method showAndWait(). Since the stage of the is shown whenever the button is pressed there is nothing to wait.. I though that I had to wait the action of pressing the button, that created misleading and lead me to an error.
+
+~~~
+
+...
+
+// Stage.class:
+
+   public void showAndWait() {
+        Toolkit.getToolkit().checkFxUserThread();
+        if (this.isPrimary()) {
+            throw new IllegalStateException("Cannot call this method on primary stage");
+        } else if (this.isShowing()) {
+            throw new IllegalStateException("Stage already visible");  // this was my warning on the terminal !
+        } else if (!Toolkit.getToolkit().canStartNestedEventLoop()) {
+            throw new IllegalStateException("showAndWait is not allowed during animation or layout processing");
+        } else {
+            assert !this.inNestedEventLoop;
+
+            this.show();
+            this.inNestedEventLoop = true;
+            Toolkit.getToolkit().enterNestedEventLoop(this);
+        }
+    }
+
+~~~
 ---
 
 # Programming Techniques in My Application
