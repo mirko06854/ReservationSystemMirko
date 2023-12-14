@@ -61,7 +61,6 @@ public class MainMerged extends Application implements MainMergedHelper{
     private Stage calendarPopup;
 
     public MainMerged() {
-        this.reservationCalendar = reservationCalendar;
     }
 
     public static void main(String[] args) {
@@ -70,7 +69,7 @@ public class MainMerged extends Application implements MainMergedHelper{
 
     @Override
     public void start(Stage primaryStage) {
-
+        this.primaryStage = primaryStage;
         primaryStage.setTitle("Reservation System");
 
         VBox layout = new VBox(10);
@@ -190,15 +189,8 @@ public class MainMerged extends Application implements MainMergedHelper{
 
         // Called when the button "Select Day" is pressed
         backToCalendarPopUpButton.setOnAction(event -> {
-            calendarPopup = new Stage();
-            calendarPopup.initModality(Modality.APPLICATION_MODAL);
-            calendarPopup.setTitle("Select Date");
-
-            // Creare un'istanza di ReservationCalendar e mostrarla nel nuovo Stage
-            ReservationCalendar reservationCalendar = new ReservationCalendar(this);
-            reservationCalendar.start(calendarPopup);
+            initializeCalendarPopup();
         });
-
 
         loadReservedTables();
         TableColumn<ReservationDisplay, String> nameColumn = new TableColumn<>("Name");
@@ -244,6 +236,16 @@ public class MainMerged extends Application implements MainMergedHelper{
         selectDishesButton.setId("selectDish");
         backToCalendarPopUpButton.setId("backButton");
 
+    }
+
+    private void initializeCalendarPopup() {
+        calendarPopup = new Stage();
+        calendarPopup.initModality(Modality.APPLICATION_MODAL);
+        calendarPopup.setTitle("Select Date");
+
+        // Create an instance of ReservationCalendar und show it up in the new Stage
+        ReservationCalendar reservationCalendar = new ReservationCalendar(this);
+        reservationCalendar.start(calendarPopup);
     }
 
     private TableColumn<ReservationDisplay, Void> getReservationDisplayVoidTableColumn() {
@@ -664,8 +666,4 @@ public class MainMerged extends Application implements MainMergedHelper{
             }
         }
     }
-
-  //  public void showMainMerged(LocalDate selectedDate) {
-  //      primaryStage.show();
-  //  }
 }
