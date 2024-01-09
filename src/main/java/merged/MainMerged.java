@@ -53,13 +53,6 @@ public class MainMerged extends Application implements MainMergedHelper{
 
     Button backToCalendarPopUpButton = new Button("Select day");
 
-    private ReservationCalendar reservationCalendar;
-
-    private Stage primaryStage;
-
-    // Create the new Stage for the selection of date
-    private Stage calendarPopup;
-
     public MainMerged() {
     }
 
@@ -69,7 +62,6 @@ public class MainMerged extends Application implements MainMergedHelper{
 
     @Override
     public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
         primaryStage.setTitle("Reservation System");
 
         VBox layout = new VBox(10);
@@ -244,7 +236,8 @@ public class MainMerged extends Application implements MainMergedHelper{
     }
 
     private void initializeCalendarPopup() {
-        calendarPopup = new Stage();
+        // Create the new Stage for the selection of date
+        Stage calendarPopup = new Stage();
         calendarPopup.initModality(Modality.APPLICATION_MODAL);
         calendarPopup.setTitle("Select Date");
 
