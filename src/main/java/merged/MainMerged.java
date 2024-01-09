@@ -288,59 +288,32 @@ public class MainMerged extends Application implements MainMergedHelper{
         alert.setTitle("Ordered Food");
         alert.setHeaderText("Ordered Plates and Quantities");
 
-        // Create a VBox to display the ordered plates, quantities, and pay buttons
         VBox vBox = new VBox(10);
         vBox.setAlignment(Pos.CENTER_LEFT);
 
-        // Iterate over the ordered plates map and add them to the VBox
         if (reservation.getPlatesMap() != null) {
             for (Map.Entry<String, Integer> entry : reservation.getPlatesMap().entrySet()) {
                 String plateName = entry.getKey();
                 int quantity = entry.getValue();
 
-                if (quantity > 0) { // Only show plates with a positive quantity
+                if (quantity > 0) {
                     HBox hBox = new HBox(10);
                     hBox.setAlignment(Pos.CENTER_LEFT);
 
-                    // Create a Label to display the plate name and quantity
                     Label label = new Label(plateName + ": " + quantity);
 
-                    // Create a Pay button
                     Button payButton = new Button("Pay");
-                    payButton.setOnAction(event -> {
-                        // Decrement the quantity of the item in the reservation's platesMap
-                        reservation.decrementPlateQuantity(plateName); // Decrement by 1
+                    payButton.setOnAction(event -> handlePlates(plateName, reservation, hBox, label, vBox));
 
-                        // Update the label text to reflect the decremented quantity
-                        int updatedQuantity = reservation.getPlatesMap().getOrDefault(plateName, 0);
-                        label.setText(plateName + ": " + updatedQuantity);
-
-                        // If the quantity becomes zero, remove the item from the GUI
-                        if (updatedQuantity <= 0) {
-                            vBox.getChildren().remove(hBox);
-
-                            // Check if all plates have been paid
-                            if (areAllPlatesPaid(reservation)) {
-                                deleteEachReservation();
-                            }
-                        }
-                    });
-
-                    // Add the Label and Pay button to the HBox
                     hBox.getChildren().addAll(label, payButton);
-
-                    // Add the HBox to the VBox
                     vBox.getChildren().add(hBox);
                 }
             }
         }
 
         alert.getDialogPane().setContent(vBox);
-
-        // Show the dialog
         alert.showAndWait();
     }
-
     public boolean areAllPlatesPaid(Reservation reservation) {
         Map<String, Integer> platesMap = reservation.getPlatesMap();
         for (int quantity : platesMap.values()) {
@@ -668,6 +641,20 @@ public class MainMerged extends Application implements MainMergedHelper{
                         reservation.getTableNumber(),
                         reservation.getCapacity()
                 ));
+            }
+        }
+    }
+
+    private void handlePlates(String plateName, Reservation reservation, HBox hBox, Label label, VBox vBox) {
+        reservation.decrementPlateQuantity(plateName); // Decrement by 1
+
+        int updatedQuantity = reservation.getPlatesMap().getOrDefault(plateName, 0);
+        label.setText(plateName + ": " + updatedQuantity);
+
+        if (updatedQuantity <= 0) {
+            vBox.getChildren().remove(hBox);
+            if (areAllPlatesPaid(reservation)) {
+                deleteEachReservation();
             }
         }
     }
