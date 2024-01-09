@@ -77,6 +77,9 @@ public class MainMerged extends Application implements MainMergedHelper{
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        // turns off the button for reserving when the app is runned the first time
+        reserveButton.setDisable(true);
+
 
         reserveButton.setOnAction(e -> {
             try {
@@ -190,6 +193,8 @@ public class MainMerged extends Application implements MainMergedHelper{
         // Called when the button "Select Day" is pressed
         backToCalendarPopUpButton.setOnAction(event -> {
             initializeCalendarPopup();
+            // turns on the button to reserve tables
+            reserveButton.setDisable(false);
         });
 
         loadReservedTables();
