@@ -88,40 +88,8 @@ public class MainMerged extends Application implements MainMergedHelper{
                 String category = calculateCategory(people, disabilitiesPeople);
 
                 // Validate input values
-                validateInputValues(tableNumber, people, disabilitiesPeople);
-
-                // Validate input values
-                if (totalPeople > 5) {
-                    showInvalidInputAlert("Number of people and disabilities exceeds the table capacity (5).");
-                    return;
-                }
-
-                if (tableNumber < 1 || people < 0 || disabilitiesPeople < 0) {
-                    showInvalidInputAlert("enter other positive values ");
-                    return; // Exit the method without proceeding further
-                }
-
-                if (tableNumber > 10) {
-                    showInvalidInputAlert("enter table number < 11");
-                    return; // Exit the method without proceeding further
-                }
-
-                if (category.equals("Special Needs") && (totalPeople > 3)) {
-                    showInvalidInputAlert("For tables with category 'Special Needs', the capacity should be the sum of people , and that must be max 3");
-                    if (disabilitiesPeople == 5) {
-                        showRecommendation(); // Suggest to add such group to two tables with category = special needs.
-                    }
-                    return; // Exit the method without proceeding further
-                }
-
-                // Check if the sum of people is greater than 3 and at least 3 are people with disabilities
-                if (totalPeople > 3 && disabilitiesPeople < people) {
-                    category = "Normal"; // Set category to "Normal" in this special case
-                }
-
-                if (!isValidTimeFormat(time)) {
-                    showInvalidTimeFormatAlert();
-                    return;
+                if (!validateInput(tableNumber, people, disabilitiesPeople, category, time, totalPeople)) {
+                    return; // The check has failed. Hence we go out from the method in such case.
                 }
 
                 // Calculate new arrival and departure times
@@ -502,10 +470,40 @@ public class MainMerged extends Application implements MainMergedHelper{
         }
     }
 
-    public void validateInputValues(int tableNumber, int people, int disabilitiesPeople) {
-        if (tableNumber < 1 || people < 0 || disabilitiesPeople < 0) {
-            showInvalidInputAlert("Invalid input values. Please enter positive values for all fields.");
+    public boolean validateInput(int tableNumber, int people, int disabilitiesPeople, String category, String time, int totalPeople) {
+        if (totalPeople > 5) {
+            showInvalidInputAlert("Number of people and disabilities exceeds the table capacity (5).");
+            return false;
         }
+
+        if (tableNumber < 1 || people < 0 || disabilitiesPeople < 0) {
+            showInvalidInputAlert("Enter other positive values.");
+            return false;
+        }
+
+        if (tableNumber > 10) {
+            showInvalidInputAlert("Enter table number < 11.");
+            return false;
+        }
+
+        if (category.equals("Special Needs") && totalPeople > 3) {
+            showInvalidInputAlert("For tables with category 'Special Needs', the capacity should be the sum of people, and that must be max 3.");
+            if (disabilitiesPeople == 5) {
+                showRecommendation();
+            }
+            return false;
+        }
+
+        if (totalPeople > 3 && disabilitiesPeople < people) {
+            category = "Normal";
+        }
+
+        if (!isValidTimeFormat(time)) {
+            showInvalidTimeFormatAlert();
+            return false;
+        }
+
+        return true; // all checks successfully passed
     }
 
     public void validateTableNumber(int tableNumber) {

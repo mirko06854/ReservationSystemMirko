@@ -53,7 +53,7 @@ public interface MainMergedHelper {
 
     // boolean isReservationConflicting(Reservation newReservation);
 
-    void validateInputValues(int tableNumber, int people, int disabilitiesPeople);
+    boolean validateInput(int tableNumber, int people, int disabilitiesPeople, String category, String time, int totalPeople);
 
     void validateTableNumber(int tableNumber);
 
