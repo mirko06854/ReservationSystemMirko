@@ -6,9 +6,7 @@ import merged.MainMerged;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
-
 import java.time.LocalTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,7 +19,6 @@ public class MainMergedTest extends ApplicationTest {
      * Test the {@link MainMerged#calculateArrivalTime(String)} method.
      * It verifies that the method correctly calculates the arrival time based on the given input time.
      */
-
     @BeforeAll
     public static void initJavaFX() {
         System.setProperty("javafx.headless", "true");
@@ -159,15 +156,13 @@ public class MainMergedTest extends ApplicationTest {
         // Given
         MainMerged mainMerged = new MainMerged();
         int tableNumber = 1;
-        LocalTime existingArrivalTime = LocalTime.of(10, 0);
-        LocalTime existingDepartureTime = LocalTime.of(12, 0);
         LocalTime newArrivalTime = LocalTime.of(12, 0);
         LocalTime newDepartureTime = LocalTime.of(14, 0);
 
         // When
         boolean isNotOverlapping = mainMerged.isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime);
 
-        if (isNotOverlapping == true) {
+        if (isNotOverlapping) {
             // Then
             assertTrue(isNotOverlapping);
         }
@@ -189,7 +184,7 @@ public class MainMergedTest extends ApplicationTest {
         // When
         boolean isOverlapping = mainMerged.isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime);
 
-        if (isOverlapping == true) {
+        if (isOverlapping) {
             // Then
             assertTrue(isOverlapping);
         }
