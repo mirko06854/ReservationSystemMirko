@@ -1,14 +1,10 @@
 package merged_tests;
 
-import back.ReservationCalendar;
 import javafx.embed.swing.JFXPanel;
 import javafx.util.Duration;
 import merged.MainMerged;
-import back.ReservationCalendar;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.time.LocalTime;
@@ -187,8 +183,6 @@ public class MainMergedTest extends ApplicationTest {
         // Given
         MainMerged mainMerged = new MainMerged();
         int tableNumber = 2;
-        LocalTime existingArrivalTime = LocalTime.of(10, 0);
-        LocalTime existingDepartureTime = LocalTime.of(12, 0);
         LocalTime newArrivalTime = LocalTime.of(10, 0);
         LocalTime newDepartureTime = LocalTime.of(12, 0);
 

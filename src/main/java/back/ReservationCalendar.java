@@ -14,16 +14,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javafx.util.Duration;
 import merged.*;
-import javafx.util.Callback;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 
 /**
@@ -35,17 +31,14 @@ public class ReservationCalendar extends Application {
     // Instance variable to store the current date
     private LocalDate currentDate = LocalDate.now();
 
-    private Reservation reservation;
-    private MainMerged mainMerged;
+    private final MainMerged mainMerged;
     private Map<LocalDate, List<Reservation>> reservationsMap = new HashMap<>();
-    private LocalDate selectedDate;
-    private List<Reservation> reservations;
+    private final LocalDate selectedDate;
 
-    public ReservationCalendar(MainMerged mainMerged) {
+    public ReservationCalendar(MainMerged mainMerged, LocalDate selectedDate) {
         this.mainMerged = mainMerged;
+        this.selectedDate = selectedDate;
     }
-
-    private ObjectProperty<Callback<LocalDate, Void>> onCalendarDaySelectedProperty = new SimpleObjectProperty<>();
 
     // Create a grid to represent the calendar
     GridPane calendarGrid = new GridPane();
@@ -145,10 +138,6 @@ public class ReservationCalendar extends Application {
         monthYearLabel.setText(formattedDate);
     }
 
-    public void setOnCalendarDaySelected(Callback<LocalDate, Void> callback) {
-        onCalendarDaySelectedProperty.set(callback);
-    }
-
     /**
      * Update the calendar grid based on the current date.
      *
@@ -168,15 +157,15 @@ public class ReservationCalendar extends Application {
             LocalDate currentDay = firstDayOfMonth.plusDays(i);
 
             // Attach an event handler to the button to handle day selection
-            dayButton.setOnAction(event -> handleDaySelection(dayButton, currentDay));
+            dayButton.setOnAction(event -> handleDaySelection(dayButton));
             calendarGrid.add(dayButton, currentDay.getDayOfWeek().getValue() - 1, (i + firstDayOfMonth.getDayOfWeek().getValue() - 1) / 7);
         }
     }
 
-    private void handleDaySelection(Button dayButton, LocalDate currentDay) {
+    private void handleDaySelection(Button dayButton) {
 
-        // Aggiorna la visualizzazione delle prenotazioni sulla GUI per la data selezionata
-        reservations = reservationsMap.get(selectedDate);
+        // Updates the booking's view on the GUI for the selected date
+        List<Reservation> reservations = reservationsMap.get(selectedDate);
 
         // Change colour of the day selected
         dayButton.setStyle("-fx-background-color: lightgreen");

@@ -27,8 +27,8 @@ public class Reservation {
     the restriction that the sum of the people must be <=5
      */
 
-    private int max = 5;
-    private int min = 1;
+    private final int max = 5;
+    private final int min = 1;
     int range = (max - min) + 1;
     int disabilitiesPeople = (int)(Math.random() * range) + min;
     int normalPeople = (int)(Math.random() * range) + min;

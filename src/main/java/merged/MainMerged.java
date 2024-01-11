@@ -18,6 +18,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import javafx.stage.Modality;
@@ -52,6 +53,8 @@ public class MainMerged extends Application implements MainMergedHelper{
     Button selectDishesButton = new Button("Select Dishes for Clients");
 
     Button backToCalendarPopUpButton = new Button("Select day");
+
+    LocalDate selectedDate;
 
     public MainMerged() {
     }
@@ -210,7 +213,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         calendarPopup.setTitle("Select Date");
 
         // Create an instance of ReservationCalendar und show it up in the new Stage
-        ReservationCalendar reservationCalendar = new ReservationCalendar(this);
+        ReservationCalendar reservationCalendar = new ReservationCalendar(this,selectedDate);
         reservationCalendar.start(calendarPopup);
     }
 
