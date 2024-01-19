@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +85,30 @@ public class ReservationSystem {
         } else {
             return "Normal";
         }
+    }
+
+    /**
+     * Checks if a new reservation with the specified arrival and departure times overlaps with any existing reservations
+     * for a given table.
+     *
+     * @param tableNumber      The number of the table for which the reservation is being checked.
+     * @param newArrivalTime   The arrival time of the new reservation.
+     * @param newDepartureTime The departure time of the new reservation.
+     * @return {@code true} if there is an overlap with an existing reservation, {@code false} otherwise.
+     */
+
+    public static boolean isReservationOverlapping(int tableNumber, LocalTime newArrivalTime, LocalTime newDepartureTime) {
+        for (Reservation existingReservation : reservations) {
+            if (existingReservation.getTableNumber() == tableNumber) {
+                LocalTime existingArrival = LocalTime.parse(existingReservation.getArrivalTime());
+                LocalTime existingDeparture = LocalTime.parse(existingReservation.getLeavingTime());
+
+                if (newArrivalTime.isBefore(existingDeparture) && newDepartureTime.isAfter(existingArrival)) {
+                    return true; // Conflicting reservation found
+                }
+            }
+        }
+        return false; // No conflicts found
     }
 
 }

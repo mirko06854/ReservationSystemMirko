@@ -100,7 +100,7 @@ public class MainMerged extends Application implements MainMergedHelper{
 
 
                 // Check if new reservation overlaps with existing reservations
-                if (isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime)) {
+                if (ReservationSystem.isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime)) {
                     showOverlapAlert();
                     return;
                 }
@@ -517,19 +517,6 @@ public class MainMerged extends Application implements MainMergedHelper{
         return time.matches("^\\d{2}:\\d{2}$");
     }
 
-    public boolean isReservationOverlapping(int tableNumber, LocalTime newArrivalTime, LocalTime newDepartureTime) {
-        for (Reservation existingReservation : reservations) {
-            if (existingReservation.getTableNumber() == tableNumber) {
-                LocalTime existingArrival = LocalTime.parse(existingReservation.getArrivalTime());
-                LocalTime existingDeparture = LocalTime.parse(existingReservation.getLeavingTime());
-
-                if (newArrivalTime.isBefore(existingDeparture) && newDepartureTime.isAfter(existingArrival)) {
-                    return true; // Conflicting reservation found
-                }
-            }
-        }
-        return false; // No conflicts found
-    }
 
     public void showOverlapAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING);

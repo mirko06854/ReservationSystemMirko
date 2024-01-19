@@ -1,5 +1,6 @@
 package merged_tests;
 
+import back.ReservationSystem;
 import javafx.embed.swing.JFXPanel;
 import javafx.util.Duration;
 import merged.MainMerged;
@@ -160,7 +161,7 @@ public class MainMergedTest extends ApplicationTest {
         LocalTime newDepartureTime = LocalTime.of(14, 0);
 
         // When
-        boolean isNotOverlapping = mainMerged.isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime);
+        boolean isNotOverlapping = ReservationSystem.isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime);
 
         if (isNotOverlapping) {
             // Then
@@ -182,7 +183,7 @@ public class MainMergedTest extends ApplicationTest {
         LocalTime newDepartureTime = LocalTime.of(12, 0);
 
         // When
-        boolean isOverlapping = mainMerged.isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime);
+        boolean isOverlapping = ReservationSystem.isReservationOverlapping(tableNumber, newArrivalTime, newDepartureTime);
 
         if (isOverlapping) {
             // Then

@@ -49,25 +49,11 @@ public interface MainMergedHelper {
      */
     String getCategoryForTable(int tableNumber);
 
-    // boolean isReservationConflicting(Reservation newReservation);
-
     boolean validateInput(int tableNumber, int people, int disabilitiesPeople, String category, String time, int totalPeople);
 
     void validateTableNumber(int tableNumber);
 
     LocalTime calculateArrivalTime(String time);
-
-    /**
-     * Checks if a new reservation with the specified arrival and departure times overlaps with any existing reservations
-     * for a given table.
-     *
-     * @param tableNumber      The number of the table for which the reservation is being checked.
-     * @param newArrivalTime   The arrival time of the new reservation.
-     * @param newDepartureTime The departure time of the new reservation.
-     * @return {@code true} if there is an overlap with an existing reservation, {@code false} otherwise.
-     */
-    boolean isReservationOverlapping(int tableNumber, LocalTime newArrivalTime, LocalTime newDepartureTime);
-
 
     /* tell the user when an overlaps happen*/
     void showOverlapAlert();
