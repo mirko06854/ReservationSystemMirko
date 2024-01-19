@@ -250,6 +250,44 @@ which didn't initialise anything.
     }
 
 ~~~
+
+#### Problem : When changing day on the calendar the old reservations are lost.
+
+I have tried different options but in the end I suppose I would need to change the structure of the majority of classes to achieve what I want. My final idea is to have an hashmap of reservations that need to be serialized and deserialized. And so I want to use an hashmap like this one :
+
+The Map<LocalDate, List<Reservation>> booking Map in Java is a data structure that associates a date (LocalDate) with a list of reservations (List<Reservation>).
+
+private Map<LocalDate, List<Reservation>> reservationsMap = new HashMap<>();  // defined in ReservationCalendar
+
+In this way the json would have a different json structure, after the deserialization of hashmap data into 1 json-file :
+
+like this :
+
+~~~
+
+{
+    "2024-01-14": [
+        {
+            "tableId": 1,
+            "customerId": "cust123",
+            "startTime": "18:00",
+            "endTime": "20:00"
+        },
+        {
+            "tableId": 2,
+            "customerId": "cust456",
+            "startTime": "19:00",
+            "endTime": "21:00"
+        }
+    ],
+    "2024-01-15": [
+        // Reservations for 2024-01-15
+    ]
+}
+
+~~~
+In this way we could prevent data to be lose when we change day in the calendar.
+
 ---
 
 # Programming Techniques in My Application
