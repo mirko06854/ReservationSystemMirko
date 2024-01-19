@@ -288,6 +288,139 @@ like this :
 ~~~
 In this way we could prevent data to be lose when we change day in the calendar.
 
+
+Example of a modified restructure of some class I started doing but required many other change as well as tests :
+
+
+~~~
+public class Main {
+    public static void main(String[] args) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<LocalDate, List<Reservation>> reservationsMap = new HashMap<>();
+
+        // Create a new back.Table instance
+        Table table = new Table(3, 4);
+
+        try {
+            objectMapper.writeValue(new File("src/main/resources/tables.json"), reservationsMap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+~~~
+
+~~~
+public class ReservationSystem {
+    private final Map<LocalDate, List<Reservation>> tables;
+    private Reservation reservation;
+
+    //to convert data enclosed into a Map into a String. To make it work is it also necessary of a dependence in the .pom file
+
+    objectMapper.registerModule(new JavaTimeModule());
+
+    /**
+     * Creates a new instance of the `ReservationSystem` class.
+     * Initializes the list of reservations and reads table data from a JSON file.
+     */
+    public ReservationSystem() {
+        tables = readReservationDataFromJson("src/main/resources/tables.json");
+    }
+
+
+    public boolean isTableAvailable(int tableNumber, LocalDate date) {
+        if (tables != null) {
+            List<Reservation> reservationsForDate = tables.get(date);
+            if (reservationsForDate != null) {
+                for (Reservation reservation : reservationsForDate) {
+                    if (reservation.getTableNumber() == tableNumber && !reservation.isAvailable()) {
+                        return false; // Table is reserved on this date
+                    }
+                }
+            }
+        }
+        return true; // Table is available if not found in reservations or no reservations for this date
+    }
+
+
+    /**
+     * Reads table data from a JSON file and initializes table availability.
+     *
+     * @return A list of table reservations.
+     */
+
+    private Map<LocalDate, List<Reservation>> readReservationDataFromJson(String filePath) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            TypeReference<HashMap<LocalDate, List<Reservation>>> typeRef
+                    = new TypeReference<HashMap<LocalDate, List<Reservation>>>() {
+            };
+            return objectMapper.readValue(new File(filePath), typeRef);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new HashMap<>();
+        }
+
+        public void validateAllBookingTimes() {
+            for (Map.Entry<LocalDate, List<Reservation>> entry : tables.entrySet()) {
+                for (Reservation reservation : entry.getValue()) {
+                    validateTableBookingTime(reservation.getStartTime());
+                    validateTableBookingTime(reservation.getEndTime());
+                }
+            }
+        }
+
+        private static void validateTableBookingTime(String time){
+            if (!time.matches("^([01]?[0-9]|2[0-3]):[0-5][0-9]$")) {
+                throw new IllegalArgumentException("Invalid table booking time: " + time);
+            }
+        }
+
+
+        /**
+         * Calculates and updates the category of each reservation in the hash map.
+         */
+        public void calculateCategoriesForAllReservations() {
+            for (List<Reservation> reservations : tables.values()) {
+                for (Reservation reservation : reservations) {
+                    String category = calculateCategoryForReservation(reservation);
+                    // Assuming Reservation has a method to set its category
+                    reservation.setCategory();
+                }
+            }
+        }
+    }
+
+    private String calculateCategoryForReservation(Reservation reservation) {
+        int normalPeople = reservation.normalPeople;
+        int disabilitiesPeople = reservation.disabilitiesPeople;
+        if (disabilitiesPeople >= normalPeople) {
+            return "Special Needs";
+        } else {
+            return "Normal";
+        }
+    }
+}
+~~~
+
+What I may add also to keep mainMerged and Calendar keeping being syncronized is using an interface that notifies MainMerged everytime the button of another day is pressed :
+
+For example:
+
+~~~
+// In ReservationCalendar:
+public interface DateSelectionListener {
+    void onDateSelected(LocalDate date);
+}
+
+// In MainMerged
+@Override
+public void onDateSelected(LocalDate date) {
+    this.selectedDate = date;
+    updateReservationDisplay(); // Update the list of reservations
+}
+~~~
+
 ---
 
 # Programming Techniques in My Application
