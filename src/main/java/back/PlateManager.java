@@ -2,6 +2,7 @@ package back;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The `PlateManager` class is responsible for managing a collection of food plates.
@@ -29,4 +30,19 @@ public class PlateManager {
         return allPlates;
     }
 
+    /**
+     * Helper method to check if all ordered plates in a reservation have been paid.
+     *
+     * @param reservation The reservation for which to check plate payments.
+     * @return True if all plates have been paid; otherwise, false.
+     */
+    public static boolean areAllPlatesPaid(Reservation reservation) {
+        Map<String, Integer> platesMap = reservation.getPlatesMap();
+        for (int quantity : platesMap.values()) {
+            if (quantity > 0) {
+                return false; // At least one plate is not paid
+            }
+        }
+        return true; // All plates are paid
+    }
 }

@@ -89,14 +89,6 @@ public interface MainMergedHelper {
     void showOrderedFoodDialog(Reservation reservation, ReservationDisplay selectedReservation);
 
     /**
-     * Helper method to check if all ordered plates in a reservation have been paid.
-     *
-     * @param reservation The reservation for which to check plate payments.
-     * @return True if all plates have been paid; otherwise, false.
-     */
-    boolean areAllPlatesPaid(Reservation reservation);
-
-    /**
      * Opens a dialog for selecting dishes and quantities to add to a reservation.
      *
      * @param reservation The reservation to which dishes and quantities will be added.

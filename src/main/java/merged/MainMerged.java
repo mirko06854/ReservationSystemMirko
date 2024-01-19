@@ -132,14 +132,10 @@ public class MainMerged extends Application implements MainMergedHelper{
             }
         });
 
-        cleanButton.setOnAction(e -> {
-            cleanJsonAndReservations();
-        });
+        cleanButton.setOnAction(e -> cleanJsonAndReservations());
 
 
-        deleteButton.setOnAction(e -> {
-            deleteEachReservation();
-        });
+        deleteButton.setOnAction(e -> deleteEachReservation());
 
         selectDishesButton.setOnAction(event -> {
             // Get the selected reservation
@@ -277,15 +273,6 @@ public class MainMerged extends Application implements MainMergedHelper{
 
         alert.getDialogPane().setContent(vBox);
         alert.showAndWait();
-    }
-    public boolean areAllPlatesPaid(Reservation reservation) {
-        Map<String, Integer> platesMap = reservation.getPlatesMap();
-        for (int quantity : platesMap.values()) {
-            if (quantity > 0) {
-                return false; // At least one plate is not paid
-            }
-        }
-        return true; // All plates are paid
     }
 
 
@@ -612,7 +599,7 @@ public class MainMerged extends Application implements MainMergedHelper{
 
         if (updatedQuantity <= 0) {
             vBox.getChildren().remove(hBox);
-            if (areAllPlatesPaid(reservation)) {
+            if (PlateManager.areAllPlatesPaid(reservation)) {
                 deleteEachReservation();
             }
         }
