@@ -23,6 +23,7 @@ import java.util.*;
 import javafx.stage.Modality;
 
 import static back.ReservationSystem.reservations;
+import back.Reservation;
 
 
 public class MainMerged extends Application implements MainMergedHelper{
@@ -144,7 +145,7 @@ public class MainMerged extends Application implements MainMergedHelper{
             // Get the selected reservation
             ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
             if (selectedReservation != null) {
-                Reservation reservation = findReservation(selectedReservation);
+                Reservation reservation = Reservation.findReservation(selectedReservation);
                 if (reservation != null) {
                     // Open the popup to select dishes for the selected reservation
                     openDishesPopup(reservation);
@@ -232,7 +233,7 @@ public class MainMerged extends Application implements MainMergedHelper{
 
                     // Get the selected reservation for this row
                     ReservationDisplay reservationDisplay = getTableView().getItems().get(getIndex());
-                    Reservation reservation = findReservation(reservationDisplay);
+                    Reservation reservation = Reservation.findReservation(reservationDisplay);
                     // Handle button click event
                     viewFoodButton.setOnAction(event -> {
                         if (reservation != null) {
@@ -385,18 +386,6 @@ public class MainMerged extends Application implements MainMergedHelper{
         }
     }
 
-    public Reservation findReservation(ReservationDisplay selectedReservation) {
-        for (Reservation reservation : reservations) {
-            if (reservation.getName().equals(selectedReservation.getName().get()) &&
-                    reservation.getArrivalTime().equals(selectedReservation.getTime().get()) &&
-                    reservation.getTableNumber() == selectedReservation.getTableNumber().get() &&
-                    reservation.getCapacity() == selectedReservation.getCapacity().get()) {
-                return reservation;
-            }
-        }
-        return null;
-    }
-
     public void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory) {
         for (Reservation reservation : reservations) {
             if (reservation.getTableNumber() == tableNumber) {
@@ -418,7 +407,7 @@ public class MainMerged extends Application implements MainMergedHelper{
     public void deleteEachReservation() {
         ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
         if (selectedReservation != null) {
-            Reservation reservation = findReservation(selectedReservation);
+            Reservation reservation = Reservation.findReservation(selectedReservation);
             if (reservation != null) {
                 reservations.remove(reservation);
                 reservationDisplays.remove(selectedReservation);

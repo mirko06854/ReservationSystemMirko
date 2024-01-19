@@ -16,14 +16,6 @@ public interface MainMergedHelper {
      */
     void loadReservedTables();
 
-    /**
-     * Finds the Reservation object corresponding to the selected ReservationDisplay.
-     *
-     * @param selectedReservation The selected reservation display.
-     * @return The corresponding Reservation object, or null if not found.
-     */
-    Reservation findReservation(ReservationDisplay selectedReservation);
-
     void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory);
 
     /**

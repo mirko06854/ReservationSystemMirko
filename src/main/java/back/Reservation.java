@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import merged.ReservationDisplay;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static back.ReservationSystem.reservations;
 
 
 /**
@@ -176,6 +179,24 @@ public class Reservation {
             }
         }
         return x;
+    }
+
+    /**
+     * Finds the Reservation object corresponding to the selected ReservationDisplay.
+     *
+     * @param selectedReservation The selected reservation display.
+     * @return The corresponding Reservation object, or null if not found.
+     */
+    public static Reservation findReservation(ReservationDisplay selectedReservation) {
+        for (Reservation reservation : reservations) {
+            if (reservation.getName().equals(selectedReservation.getName().get()) &&
+                    reservation.getArrivalTime().equals(selectedReservation.getTime().get()) &&
+                    reservation.getTableNumber() == selectedReservation.getTableNumber().get() &&
+                    reservation.getCapacity() == selectedReservation.getCapacity().get()) {
+                return reservation;
+            }
+        }
+        return null;
     }
 
 }
