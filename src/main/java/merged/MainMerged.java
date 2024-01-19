@@ -1,8 +1,7 @@
 package merged;
 
 import back.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -23,11 +22,11 @@ import java.time.LocalTime;
 import java.util.*;
 import javafx.stage.Modality;
 
+import static back.ReservationSystem.reservations;
+
 
 public class MainMerged extends Application implements MainMergedHelper{
-    public ArrayList<Reservation> reservations = new ArrayList<>();
     private final ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private TableView<ReservationDisplay> reservationTable;
 
@@ -368,7 +367,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         try {
             File file = new File("src/main/resources/tables.json");
             if (file.exists()) {
-                Reservation[] loadedTables = objectMapper.readValue(file, Reservation[].class);
+                Reservation[] loadedTables = back.Main.objectMapper.readValue(file, Reservation[].class);
 
                 for (Reservation reservation : loadedTables) {
                     ReservationDisplay display = new ReservationDisplay(
@@ -416,16 +415,6 @@ public class MainMerged extends Application implements MainMergedHelper{
         }
     }
 
-    public void serializeJsonFile() {
-        File file = new File("src/main/resources/tables.json");
-        try {
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-            objectMapper.writeValue(file, reservations);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void deleteEachReservation() {
         ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
         if (selectedReservation != null) {
@@ -434,7 +423,7 @@ public class MainMerged extends Application implements MainMergedHelper{
                 reservations.remove(reservation);
                 reservationDisplays.remove(selectedReservation);
                 updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
-                serializeJsonFile(); // Save changes to the JSON file
+                back.Main.serializeJsonFile(); // Save changes to the JSON file
             }
         }
     }
@@ -452,7 +441,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         clearInputFields();
 
         // Serialize and save changes to the JSON file
-        serializeJsonFile();
+        back.Main.serializeJsonFile();
     }
 
     public Duration calculateDuration(LocalTime startTime, LocalTime endTime) {
@@ -596,7 +585,7 @@ public class MainMerged extends Application implements MainMergedHelper{
                 reservation.getTableNumber(),
                 reservation.getCapacity()
         ));
-        serializeJsonFile();
+        back.Main.serializeJsonFile();
         clearInputFields();
     }
 

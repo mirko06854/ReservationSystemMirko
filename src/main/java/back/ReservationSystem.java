@@ -15,20 +15,20 @@ import java.util.List;
  */
 
 public class ReservationSystem {
-    private final List<Reservation> tables;
+   static public List<Reservation> reservations = new ArrayList<>();
 
     /**
      * Creates a new instance of the `ReservationSystem` class.
      * Initializes the list of reservations and reads table data from a JSON file.
      */
     public ReservationSystem() {
-        tables = readReservationDataFromJson();
+        reservations = readReservationDataFromJson();
     }
 
 
     public boolean isTableAvailable(int tableNumber) {
-        if (tables != null) {
-            for (Reservation table : tables) {
+        if (reservations != null) {
+            for (Reservation table : reservations) {
                 if (table.getTableNumber() == tableNumber) {
                     return table.isAvailable();
                 }
@@ -47,7 +47,7 @@ public class ReservationSystem {
     private List<Reservation> readReservationDataFromJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            List<Reservation> reservations = objectMapper.readValue(new File("src/main/resources/tables.json"), new TypeReference<>() {
+            reservations = objectMapper.readValue(new File("src/main/resources/tables.json"), new TypeReference<>() {
             });
 
             // Set the availability property of each table for each reservation

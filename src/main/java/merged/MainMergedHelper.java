@@ -26,8 +26,6 @@ public interface MainMergedHelper {
 
     void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory);
 
-    void serializeJsonFile();
-
     /**
      * Clears all reservations and their displays, refreshes the reservation table display,
      * clears input fields, and saves the changes to the JSON file.

@@ -1,9 +1,12 @@
 package back;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
+
+import static back.ReservationSystem.reservations;
 
 /**
  * This class is the main class.
@@ -12,8 +15,9 @@ import java.io.IOException;
  * and vice-versa
  **/
 public class Main {
+
+    public static ObjectMapper objectMapper = new ObjectMapper();
     public static void main(String[] args) {
-        ObjectMapper objectMapper = new ObjectMapper();
 
         // Create a new back.Table instance
         Table table = new Table(3, 4);
@@ -27,6 +31,16 @@ public class Main {
 
             // Print the deserialized Table object
             System.out.println("Deserialized back.Table: " + deserializedTable);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void serializeJsonFile() {
+        File file = new File("src/main/resources/tables.json");
+        try {
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            objectMapper.writeValue(file, reservations);
         } catch (IOException e) {
             e.printStackTrace();
         }
