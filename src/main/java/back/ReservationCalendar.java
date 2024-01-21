@@ -14,9 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 import javafx.util.Duration;
 import merged.*;
@@ -32,17 +30,13 @@ public class ReservationCalendar extends Application {
     private LocalDate currentDate = LocalDate.now();
 
     private final MainMerged mainMerged;
-    private Map<LocalDate, List<Reservation>> reservationsMap = new HashMap<>();
-    private final LocalDate selectedDate;
 
-    public ReservationCalendar(MainMerged mainMerged, LocalDate selectedDate) {
+    public ReservationCalendar(MainMerged mainMerged) {
         this.mainMerged = mainMerged;
-        this.selectedDate = selectedDate;
     }
 
     // Create a grid to represent the calendar
     GridPane calendarGrid = new GridPane();
-
 
     /**
      * The main method to launch the ReservationCalendar JavaFX application.
@@ -120,7 +114,7 @@ public class ReservationCalendar extends Application {
         Scene scene = new Scene(root, 800, 600);
 
         // Add an external stylesheet to the scene
-        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles.css")).toExternalForm());
 
         // Set the scene to the primary stage and display it
         primaryStage.setScene(scene);
@@ -165,7 +159,7 @@ public class ReservationCalendar extends Application {
     private void handleDaySelection(Button dayButton) {
 
         // Updates the booking's view on the GUI for the selected date
-        List<Reservation> reservations = reservationsMap.get(selectedDate);
+    //    List<Reservation> reservations = reservationsMap.get(selectedDate);
 
         // Change colour of the day selected
         dayButton.setStyle("-fx-background-color: lightgreen");
@@ -179,6 +173,6 @@ public class ReservationCalendar extends Application {
            
         });
         delay.play();
-         mainMerged.updateReservationsDisplay(reservations);
+         mainMerged.updateReservationsDisplay(ReservationSystem.reservations);
     }
 }

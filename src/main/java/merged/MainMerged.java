@@ -12,8 +12,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import javafx.stage.Modality;
@@ -48,8 +46,6 @@ public class MainMerged extends Application implements MainMergedHelper{
     Button selectDishesButton = new Button("Select Dishes for Clients");
 
     Button backToCalendarPopUpButton = new Button("Select day");
-
-    LocalDate selectedDate;
 
     public MainMerged() {
     }
@@ -204,7 +200,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         calendarPopup.setTitle("Select Date");
 
         // Create an instance of ReservationCalendar und show it up in the new Stage
-        ReservationCalendar reservationCalendar = new ReservationCalendar(this,selectedDate);
+        ReservationCalendar reservationCalendar = new ReservationCalendar(this);
         reservationCalendar.start(calendarPopup);
     }
 
@@ -258,7 +254,7 @@ public class MainMerged extends Application implements MainMergedHelper{
                     Label label = new Label(plateName + ": " + quantity);
 
                     Button payButton = new Button("Pay");
-                    payButton.setOnAction(event -> Plate.handlePlates(plateName, reservation, hBox, label, vBox));
+                    payButton.setOnAction(event -> PlateManager.handlePlates(plateName, reservation, hBox, label, vBox));
 
                     hBox.getChildren().addAll(label, payButton);
                     vBox.getChildren().add(hBox);

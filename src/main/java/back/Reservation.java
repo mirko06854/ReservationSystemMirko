@@ -168,7 +168,7 @@ public class Reservation {
         }
     }
 
-    public StringBuilder setCategory() {
+    public void setCategory() {
         StringBuilder x = new StringBuilder();
         while (disabilitiesPeople + normalPeople <= sumOfPeople) {
             if (disabilitiesPeople >= normalPeople) {
@@ -179,7 +179,6 @@ public class Reservation {
 
             }
         }
-        return x;
     }
 
     /**
