@@ -258,7 +258,7 @@ public class MainMerged extends Application implements MainMergedHelper{
                     Label label = new Label(plateName + ": " + quantity);
 
                     Button payButton = new Button("Pay");
-                    payButton.setOnAction(event -> handlePlates(plateName, reservation, hBox, label, vBox));
+                    payButton.setOnAction(event -> Plate.handlePlates(plateName, reservation, hBox, label, vBox));
 
                     hBox.getChildren().addAll(label, payButton);
                     vBox.getChildren().add(hBox);
@@ -505,20 +505,6 @@ public class MainMerged extends Application implements MainMergedHelper{
                         reservation.getTableNumber(),
                         reservation.getCapacity()
                 ));
-            }
-        }
-    }
-
-    private void handlePlates(String plateName, Reservation reservation, HBox hBox, Label label, VBox vBox) {
-        reservation.decrementPlateQuantity(plateName); // Decrement by 1
-
-        int updatedQuantity = reservation.getPlatesMap().getOrDefault(plateName, 0);
-        label.setText(plateName + ": " + updatedQuantity);
-
-        if (updatedQuantity <= 0) {
-            vBox.getChildren().remove(hBox);
-            if (PlateManager.areAllPlatesPaid(reservation)) {
-                Reservation.deleteEachReservation();
             }
         }
     }
