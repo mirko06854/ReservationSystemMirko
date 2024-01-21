@@ -10,15 +10,6 @@ import java.time.LocalTime;
 public interface MainMergedHelper {
 
     /**
-     * Loads reservations from a JSON file and populates the application's data structures.
-     * If the file exists, it reads the reservations and creates corresponding displays.
-     * Reservations and their displays are added to internal collections.
-     */
-    void loadReservedTables();
-
-    void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory);
-
-    /**
      * Clears all reservations and their displays, refreshes the reservation table display,
      * clears input fields, and saves the changes to the JSON file.
      */

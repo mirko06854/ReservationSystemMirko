@@ -4,8 +4,6 @@ import back.*;
 
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,8 +13,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -27,7 +23,6 @@ import back.Reservation;
 
 
 public class MainMerged extends Application implements MainMergedHelper{
-    private final ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
 
     private TableView<ReservationDisplay> reservationTable;
 
@@ -72,7 +67,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // turns off the button for reserving when the app is runned the first time
+        // turns off the button for reserving when the app is run the first time
         reserveButton.setDisable(true);
 
 
@@ -92,7 +87,7 @@ public class MainMerged extends Application implements MainMergedHelper{
 
                 // Validate input values
                 if (!validateInput(tableNumber, people, disabilitiesPeople, category, time, totalPeople)) {
-                    return; // The check has failed. Hence we go out from the method in such case.
+                    return; // The check has failed. Hence, we go out from the method in such case.
                 }
 
                 // Calculate new arrival and departure times
@@ -156,7 +151,7 @@ public class MainMerged extends Application implements MainMergedHelper{
             reserveButton.setDisable(false);
         });
 
-        loadReservedTables();
+        Main.loadReservedTables();
         TableColumn<ReservationDisplay, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
@@ -172,7 +167,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         reservationTable = new TableView<>();
         reservationTable.setId("reservationTable");
         reservationTable.getColumns().addAll(nameColumn, timeColumn, tableNumberColumn, viewFoodColumn);
-        reservationTable.setItems(reservationDisplays);
+        reservationTable.setItems(ReservationDisplay.reservationDisplays);
 
         // Add a listener to enable/disable the "Select Dishes for Clients" button based on row selection
         reservationTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -350,55 +345,14 @@ public class MainMerged extends Application implements MainMergedHelper{
         dialog.showAndWait();
     }
 
-
-    public void loadReservedTables() {
-        try {
-            File file = new File("src/main/resources/tables.json");
-            if (file.exists()) {
-                Reservation[] loadedTables = back.Main.objectMapper.readValue(file, Reservation[].class);
-
-                for (Reservation reservation : loadedTables) {
-                    ReservationDisplay display = new ReservationDisplay(
-                            reservation.getName(),
-                            reservation.getArrivalTime(),
-                            reservation.getTableNumber(),
-                            reservation.getCapacity()
-                    );
-                    reservations.add(reservation);
-                    reservationDisplays.add(display);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory) {
-        for (Reservation reservation : reservations) {
-            if (reservation.getTableNumber() == tableNumber) {
-                LocalTime existingArrivalTime = LocalTime.parse(reservation.getArrivalTime());
-                LocalTime existingLeavingTime = existingArrivalTime.plusHours(2); // Calculate leaving time as 2 hours after arrival
-
-                LocalTime newResArrivalTime = LocalTime.parse(newReservationArrivalTime);
-                LocalTime newResLeavingTime = newResArrivalTime.plusHours(2); // Calculate leaving time as 2 hours after arrival
-
-                // Check if new reservation overlaps with an existing reservation
-                if ((newResArrivalTime.isBefore(existingLeavingTime) && newResLeavingTime.isAfter(existingArrivalTime)) ||
-                        (newResLeavingTime.isAfter(existingArrivalTime) && newResArrivalTime.isBefore(existingLeavingTime))) {
-                    return; // New reservation overlaps with an existing reservation
-                }
-            }
-        }
-    }
-
     public void deleteEachReservation() {
         ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
         if (selectedReservation != null) {
             Reservation reservation = Reservation.findReservation(selectedReservation);
             if (reservation != null) {
                 reservations.remove(reservation);
-                reservationDisplays.remove(selectedReservation);
-                updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
+                ReservationDisplay.reservationDisplays.remove(selectedReservation);
+                Table.updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
                 back.Main.serializeJsonFile(); // Save changes to the JSON file
             }
         }
@@ -407,7 +361,7 @@ public class MainMerged extends Application implements MainMergedHelper{
     public void cleanJsonAndReservations() {
         // Clear reservations and reservationDisplays
         reservations.clear();
-        reservationDisplays.clear();
+        ReservationDisplay.reservationDisplays.clear();
 
         // Clear table data and refresh display
         reservationTable.getItems().clear();
@@ -542,7 +496,7 @@ public class MainMerged extends Application implements MainMergedHelper{
     public void addReservation(String name, String time, int tableNumber, int capacity) {
         Reservation reservation = new Reservation(name, time, tableNumber, capacity);
         reservations.add(reservation);
-        reservationDisplays.add(new ReservationDisplay(
+        ReservationDisplay.reservationDisplays.add(new ReservationDisplay(
                 reservation.getName(),
                 reservation.getArrivalTime(),
                 reservation.getTableNumber(),
@@ -581,7 +535,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         // Add the new reservations to the reservationDisplays list
         if (reservations != null) {
             for (Reservation reservation : reservations) {
-                reservationDisplays.add(new ReservationDisplay(
+                ReservationDisplay.reservationDisplays.add(new ReservationDisplay(
                         reservation.getName(),
                         reservation.getArrivalTime(),
                         reservation.getTableNumber(),

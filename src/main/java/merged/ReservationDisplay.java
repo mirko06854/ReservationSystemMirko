@@ -1,6 +1,8 @@
 package merged;
 
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * Since the Reservation class extends the Table class, this caused issues when using JavaFX's TableView, infact I couldn't see the content of table inserted in the GUI.
@@ -9,6 +11,8 @@ import javafx.beans.property.*;
 
 @SuppressWarnings("unused")
 public class ReservationDisplay {
+
+    public static final ObservableList<ReservationDisplay> reservationDisplays = FXCollections.observableArrayList();
     private final StringProperty name;
     private final StringProperty time;
     private final IntegerProperty tableNumber;

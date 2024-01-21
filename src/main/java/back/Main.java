@@ -2,11 +2,13 @@ package back;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import merged.ReservationDisplay;
 
 import java.io.File;
 import java.io.IOException;
 
 import static back.ReservationSystem.reservations;
+import merged.ReservationDisplay;
 
 /**
  * This class is the main class.
@@ -41,6 +43,33 @@ public class Main {
         try {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
             objectMapper.writeValue(file, reservations);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads reservations from a JSON file and populates the application's data structures.
+     * If the file exists, it reads the reservations and creates corresponding displays.
+     * Reservations and their displays are added to internal collections.
+     */
+    public static void loadReservedTables() {
+        try {
+            File file = new File("src/main/resources/tables.json");
+            if (file.exists()) {
+                Reservation[] loadedTables = back.Main.objectMapper.readValue(file, Reservation[].class);
+
+                for (Reservation reservation : loadedTables) {
+                    ReservationDisplay display = new ReservationDisplay(
+                            reservation.getName(),
+                            reservation.getArrivalTime(),
+                            reservation.getTableNumber(),
+                            reservation.getCapacity()
+                    );
+                    reservations.add(reservation);
+                    ReservationDisplay.reservationDisplays.add(display);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
