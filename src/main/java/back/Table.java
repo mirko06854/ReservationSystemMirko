@@ -68,7 +68,7 @@ public class Table {
         return "Table " + tableNumber + " (Capacity: " + capacity + ")";
     }
 
-    public static void updateTableAvailability(int tableNumber, String newReservationArrivalTime, String newReservationLeavingTime, String calculatedCategory) {
+    public static void updateTableAvailability(int tableNumber, String newReservationArrivalTime) {
         for (Reservation reservation : reservations) {
             if (reservation.getTableNumber() == tableNumber) {
                 LocalTime existingArrivalTime = LocalTime.parse(reservation.getArrivalTime());
@@ -83,6 +83,22 @@ public class Table {
                     return; // New reservation overlaps with an existing reservation
                 }
             }
+        }
+    }
+
+    /**
+     * Determines the category of a given table number.
+     *
+     * @param tableNumber The table number to determine the category for.
+     * @return The category of the table.
+     */
+    public static String getCategoryForTable(int tableNumber) {
+        if (tableNumber >= 1 && tableNumber <= 5) {
+            return "Normal";
+        } else if (tableNumber >= 6 && tableNumber <= 10) {
+            return "Special Needs";
+        } else {
+            return "Unknown"; // Or whatever default category you want for invalid table numbers
         }
     }
 }

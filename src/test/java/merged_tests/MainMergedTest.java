@@ -1,6 +1,7 @@
 package merged_tests;
 
 import back.ReservationSystem;
+import back.Table;
 import javafx.embed.swing.JFXPanel;
 import javafx.util.Duration;
 import merged.MainMerged;
@@ -58,25 +59,24 @@ public class MainMergedTest extends ApplicationTest {
     }
 
     /**
-     * Test the {@link MainMerged#getCategoryForTable(int)} method
+     * Test the {@link Table#getCategoryForTable(int)} method
      * when the table number corresponds to a "Normal" category.
      * It verifies that the correct category is returned for a valid table number.
      */
     @Test
     public void getCategoryForTableNormal() {
         // Given
-        MainMerged mainMerged = new MainMerged();
         int tableNumber = 3;  // a number from 1 to 5 make the test pass, otherwise fails
 
         // When
-        String category = mainMerged.getCategoryForTable(tableNumber);
+        String category = Table.getCategoryForTable(tableNumber);
 
         // Then
         assertEquals("Normal", category);
     }
 
     /**
-     * Test the {@link MainMerged#getCategoryForTable(int)} method
+     * Test the {@link Table#getCategoryForTable(int)} method
      * when the table number corresponds to a "Special Needs" category.
      * It verifies that the correct category is returned for a valid table number.
      */
@@ -84,29 +84,27 @@ public class MainMergedTest extends ApplicationTest {
     @Test
     public void getCategoryForTableSpecialNeeds() {
         // Given
-        MainMerged mainMerged = new MainMerged();
         int tableNumber = 6; // a number from 6 to 10 make the test pass, otherwise fails
 
         // When
-        String category = mainMerged.getCategoryForTable(tableNumber);
+        String category = Table.getCategoryForTable(tableNumber);
 
         // Then
         assertEquals("Special Needs", category);
     }
 
     /**
-     * Test the {@link MainMerged#getCategoryForTable(int)} method
+     * Test the {@link Table#getCategoryForTable(int)} method
      * when the table number is not recognized and falls into the "Unknown" category.
      * It verifies that the "Unknown" category is returned for an invalid table number.
      */
     @Test
     public void getCategoryForTableUnknown() {
         // Given
-        MainMerged mainMerged = new MainMerged();
         int tableNumber = 15;
 
         // When
-        String category = mainMerged.getCategoryForTable(tableNumber);
+        String category = Table.getCategoryForTable(tableNumber);
 
         // Then
         assertEquals("Unknown", category);
@@ -148,14 +146,13 @@ public class MainMergedTest extends ApplicationTest {
     }
 
     /**
-     * Test the {@link MainMerged#isReservationOverlapping(int, LocalTime, LocalTime)} method
+     * Test the {@link ReservationSystem#isReservationOverlapping(int, LocalTime, LocalTime)} method
      * when there is no overlap between reservations.
      * It verifies that the method correctly identifies no overlap.
      */
     @Test
     public void isReservationOverlappingNoOverlap() {
         // Given
-        MainMerged mainMerged = new MainMerged();
         int tableNumber = 1;
         LocalTime newArrivalTime = LocalTime.of(12, 0);
         LocalTime newDepartureTime = LocalTime.of(14, 0);
@@ -170,14 +167,13 @@ public class MainMergedTest extends ApplicationTest {
     }
 
     /**
-     * Test the {@link MainMerged#isReservationOverlapping(int, LocalTime, LocalTime)} method
+     * Test the {@link ReservationSystem#isReservationOverlapping(int, LocalTime, LocalTime)} method
      * when there is an overlap between reservations.
      * It verifies that the method correctly identifies the overlap.
      */
     @Test
     public void isReservationOverlappingOverlap() {
         // Given
-        MainMerged mainMerged = new MainMerged();
         int tableNumber = 2;
         LocalTime newArrivalTime = LocalTime.of(10, 0);
         LocalTime newDepartureTime = LocalTime.of(12, 0);

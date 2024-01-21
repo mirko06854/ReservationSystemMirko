@@ -24,16 +24,16 @@ import back.Reservation;
 
 public class MainMerged extends Application implements MainMergedHelper{
 
-    private TableView<ReservationDisplay> reservationTable;
+    public static TableView<ReservationDisplay> reservationTable;
 
     Label nameLabel = new Label("Name:");
-    TextField nameField = new TextField();
+    static TextField nameField = new TextField();
 
     Label timeLabel = new Label("Time:");
-    TextField timeField = new TextField();
+    static TextField timeField = new TextField();
 
     Label tableNumberLabel = new Label("Table Number:");
-    TextField tableNumberField = new TextField();
+    static TextField tableNumberField = new TextField();
 
     Label peopleNumberLabel = new Label("people:");
     TextField peopleNumberField = new TextField();
@@ -115,7 +115,7 @@ public class MainMerged extends Application implements MainMergedHelper{
                 }
 
                 // Create and store the reservation
-                addReservation(name, time, tableNumber, totalPeople);
+                Reservation.addReservation(name, time, tableNumber, totalPeople);
 
                 // Clear input fields
                 clearInputFields();
@@ -130,7 +130,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         cleanButton.setOnAction(e -> cleanJsonAndReservations());
 
 
-        deleteButton.setOnAction(e -> deleteEachReservation());
+        deleteButton.setOnAction(e -> Reservation.deleteEachReservation());
 
         selectDishesButton.setOnAction(event -> {
             // Get the selected reservation
@@ -344,20 +344,6 @@ public class MainMerged extends Application implements MainMergedHelper{
         // Show the dialog
         dialog.showAndWait();
     }
-
-    public void deleteEachReservation() {
-        ReservationDisplay selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
-        if (selectedReservation != null) {
-            Reservation reservation = Reservation.findReservation(selectedReservation);
-            if (reservation != null) {
-                reservations.remove(reservation);
-                ReservationDisplay.reservationDisplays.remove(selectedReservation);
-                Table.updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime(), reservation.getLeavingTime(), getCategoryForTable(reservation.getTableNumber())); // Set the table as available again
-                back.Main.serializeJsonFile(); // Save changes to the JSON file
-            }
-        }
-    }
-
     public void cleanJsonAndReservations() {
         // Clear reservations and reservationDisplays
         reservations.clear();
@@ -382,15 +368,6 @@ public class MainMerged extends Application implements MainMergedHelper{
         return new Duration(durationSeconds * 1000);   // because javafx.util.Duration uses such unit
     }
 
-    public String getCategoryForTable(int tableNumber) {
-        if (tableNumber >= 1 && tableNumber <= 5) {
-            return "Normal";
-        } else if (tableNumber >= 6 && tableNumber <= 10) {
-            return "Special Needs";
-        } else {
-            return "Unknown"; // Or whatever default category you want for invalid table numbers
-        }
-    }
 
     public boolean validateInput(int tableNumber, int people, int disabilitiesPeople, String category, String time, int totalPeople) {
         if (totalPeople > 5) {
@@ -477,7 +454,7 @@ public class MainMerged extends Application implements MainMergedHelper{
     }
 
     public boolean validateTableCategory(int tableNumber, int capacity, String category) {
-        String selectedTableCategory = getCategoryForTable(tableNumber);
+        String selectedTableCategory = Table.getCategoryForTable(tableNumber);
         int calculatedCapacity = Integer.parseInt(peopleNumberField.getText()) + Integer.parseInt(disabilitiesPeopleNumberField.getText());
 
         if (!category.equals(selectedTableCategory) || capacity < calculatedCapacity) {
@@ -493,20 +470,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         return true; // Validation passed
     }
 
-    public void addReservation(String name, String time, int tableNumber, int capacity) {
-        Reservation reservation = new Reservation(name, time, tableNumber, capacity);
-        reservations.add(reservation);
-        ReservationDisplay.reservationDisplays.add(new ReservationDisplay(
-                reservation.getName(),
-                reservation.getArrivalTime(),
-                reservation.getTableNumber(),
-                reservation.getCapacity()
-        ));
-        back.Main.serializeJsonFile();
-        clearInputFields();
-    }
-
-    public void clearInputFields() {
+    public static void clearInputFields() {
         nameField.clear();
         timeField.clear();
         tableNumberField.clear();
@@ -554,7 +518,7 @@ public class MainMerged extends Application implements MainMergedHelper{
         if (updatedQuantity <= 0) {
             vBox.getChildren().remove(hBox);
             if (PlateManager.areAllPlatesPaid(reservation)) {
-                deleteEachReservation();
+                Reservation.deleteEachReservation();
             }
         }
     }

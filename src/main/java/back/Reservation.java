@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import merged.MainMerged;
 import merged.ReservationDisplay;
 
 import java.util.HashMap;
@@ -197,6 +198,41 @@ public class Reservation {
             }
         }
         return null;
+    }
+
+    /**
+     * Adds a new reservation with the specified details, such as guest name, arrival time, table number, and capacity.
+     * Additionally, it schedules the table to be unlocked after a fixed duration from the reservation's arrival time.
+     *
+     * @param name        The name of the guest making the reservation.
+     * @param time        The arrival time for the reservation.
+     * @param tableNumber The number of the reserved table.
+     * @param capacity    The capacity of the reserved table.
+     */
+    public static void addReservation(String name, String time, int tableNumber, int capacity) {
+        Reservation reservation = new Reservation(name, time, tableNumber, capacity);
+        reservations.add(reservation);
+        ReservationDisplay.reservationDisplays.add(new ReservationDisplay(
+                reservation.getName(),
+                reservation.getArrivalTime(),
+                reservation.getTableNumber(),
+                reservation.getCapacity()
+        ));
+        back.Main.serializeJsonFile();
+        MainMerged.clearInputFields();
+    }
+
+    public static void deleteEachReservation() {
+        ReservationDisplay selectedReservation = MainMerged.reservationTable.getSelectionModel().getSelectedItem();
+        if (selectedReservation != null) {
+            Reservation reservation = Reservation.findReservation(selectedReservation);
+            if (reservation != null) {
+                reservations.remove(reservation);
+                ReservationDisplay.reservationDisplays.remove(selectedReservation);
+                Table.updateTableAvailability(reservation.getTableNumber(), reservation.getArrivalTime()); // Set the table as available again
+                back.Main.serializeJsonFile(); // Save changes to the JSON file
+            }
+        }
     }
 
 }

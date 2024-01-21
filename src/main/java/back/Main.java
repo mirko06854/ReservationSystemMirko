@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static back.ReservationSystem.reservations;
-import merged.ReservationDisplay;
 
 /**
  * This class is the main class.

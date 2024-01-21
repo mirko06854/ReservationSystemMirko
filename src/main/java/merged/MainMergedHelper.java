@@ -24,14 +24,6 @@ public interface MainMergedHelper {
      */
     Duration calculateDuration(LocalTime startTime, LocalTime endTime);
 
-    /**
-     * Determines the category of a given table number.
-     *
-     * @param tableNumber The table number to determine the category for.
-     * @return The category of the table.
-     */
-    String getCategoryForTable(int tableNumber);
-
     boolean validateInput(int tableNumber, int people, int disabilitiesPeople, String category, String time, int totalPeople);
 
     void validateTableNumber(int tableNumber);
@@ -53,19 +45,6 @@ public interface MainMergedHelper {
     String calculateCategory(int people, int disabilitiesPeople);
 
     boolean validateTableCategory(int tableNumber, int capacity, String category);
-
-    /**
-     * Adds a new reservation with the specified details, such as guest name, arrival time, table number, and capacity.
-     * Additionally, it schedules the table to be unlocked after a fixed duration from the reservation's arrival time.
-     *
-     * @param name        The name of the guest making the reservation.
-     * @param time        The arrival time for the reservation.
-     * @param tableNumber The number of the reserved table.
-     * @param capacity    The capacity of the reserved table.
-     */
-    void addReservation(String name, String time, int tableNumber, int capacity);
-
-    void clearInputFields();
 
     void showInvalidNumberAlert();
 
