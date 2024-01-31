@@ -421,6 +421,59 @@ public void onDateSelected(LocalDate date) {
 }
 ~~~
 
+
+I finally solved it, although there is a little bug that for whichever day I select, for each month, the selected day is always the last of the month. I changed a lot of datastructures in classes, as I serialize and deserialize Hashmaps of date and reservations. So now the json has both dates and inside the reservation of each date!
+
+Note : I will upload this final version in a zip file called "ReservationSystemMirkoHashMapWorking" inside this project in the root folder, because I haven't done tests and there is still a small bug to solve ( the previous one). So you can also compare better all the structure changed. To see such last version just extract the archive and open as a normal project. From Intelliji go to file/open and select the project, that is called "ReservationSystemMirko". Note : extract such zip in a separate folder tahn the cloned repo, since the folder has the same name ! Otherwise you will overwrite it.
+
+Main changes done:
+
+* Custom serializer class:
+
+    Introduced a custom serializer class (CustomSerializersModule) to handle the serialization of LocalDate objects.
+    This class ensures precise and efficient serialization of dates, improving data integrity and storage.
+
+* Custom deserializer class:
+
+    Used a custom deserializer class (LocalDateDeserializer) to handle the deserialization of LocalDate objects.
+    This class ensures proper parsing and interpretation of dates during deserialization, maintaining data consistency.
+
+* Structured reservations in a map:
+
+Employed a Map<LocalDate, List<Reservation>> structure to store reservations.
+This structure replaces the single-list approach, ensuring that reservations are associated with their respective dates for efficient management.
+
+* Modified ReservationSystem class:
+
+Adapted the ReservationSystem class to utilize the new Map<LocalDate, List<Reservation>> structure for storing reservations.
+This modification aligns the system with the new data storage approach.
+
+* Added dependency for hashmap serialization and deserialization in the pom file:
+
+Incorporated dependencies to handle serialization and deserialization of hashmaps, enabling efficient data handling.
+This ensures smooth conversion between data structures and simplifies data management.
+
+~~~mvn
+ <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson</groupId>
+            <artifactId>jackson-bom</artifactId>
+            <version>2.9.0</version>
+            <scope>import</scope>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+~~~
+
 ---
 
 # Programming Techniques in My Application
